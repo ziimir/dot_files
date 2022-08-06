@@ -1,0 +1,30 @@
+{
+  "tsserver.disableAutomaticTypeAcquisition": true,
+
+  "typescript.format.enabled": false,
+  "typescript.suggest.autoImports": false,
+  "typescript.updateImportsOnFileMove.enable": false,
+  "typescript.validate.enable": false,
+
+  "javascript.format.enabled": false,
+  "javascript.suggest.autoImports": false,
+  "javascript.updateImportsOnFileMove.enable": false,
+  "javascript.validate.enable": false,
+  "cSpell.userWords": [
+    "COMBINATOR",
+    "combinators",
+    "geoadv",
+    "repos",
+    "stylelint",
+    "unmount"
+  ],
+
+  "languageserver": {
+    "haskell": {
+      "command": "haskell-language-server-wrapper",
+      "args": ["--lsp"],
+      "rootPatterns": ["*.cabal", "stack.yaml", "cabal.project", "package.yaml", "hie.yaml"],
+      "filetypes": ["haskell", "lhaskell"]
+    }
+  }
+}
