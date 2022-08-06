@@ -22,6 +22,9 @@ use({
 
         -- disable omnicompletion status messages (e.g. Pattern not found) https://stackoverflow.com/questions/14716756/vim-disable-omnicompletion-status-messages-e-g-pattern-not-found
         cmd [[setlocal shortmess+=c]]
+
+        --inoremap <silent><expr> <C-n> coc#pum#visible() ? coc#pum#next(1) : "\<C-n>"
+        --inoremap <silent><expr> <C-p> coc#pum#visible() ? coc#pum#prev(1) : "\<C-p>"
     end
 })
 

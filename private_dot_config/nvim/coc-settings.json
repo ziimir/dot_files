@@ -1,4 +1,6 @@
 {
+  "suggest.noselect": true,
+
   "tsserver.disableAutomaticTypeAcquisition": true,
 
   "typescript.format.enabled": false,
