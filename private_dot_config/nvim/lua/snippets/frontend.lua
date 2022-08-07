@@ -63,4 +63,4 @@ ls.add_snippets('javascript', {
 
 ls.filetype_extend('javascriptreact', {'javascript'})
 ls.filetype_extend('typescript', {'javascript'})
-ls.filetype_extend('typescriptreact', {'typescript', 'javascriptreact'})
+ls.filetype_extend('typescriptreact', {'javascript', 'typescript', 'javascriptreact'})
