@@ -30,9 +30,9 @@ ls.add_snippets('javascript', {
     s('dreq', fmt([[const {{{}}} = require('{}');]], {i(0), i(1)})),
 
     s('l', fmt([[let {} = {};]], {i(1), i(0)})),
-    s('c', fmt([[cosnt {} = {};]], {i(1), i(0)})),
+    s('c', fmt([[const {} = {};]], {i(1), i(0)})),
     s('dl', fmt([[let {{{}}} = {};]], {i(0), i(1)})),
-    s('dc', fmt([[cosnt {{{}}} = {};]], {i(0), i(1)})),
+    s('dc', fmt([[const {{{}}} = {};]], {i(0), i(1)})),
 
     s('r', fmt([[return {};]], {i(0)})),
     s('rc', fmt([[
