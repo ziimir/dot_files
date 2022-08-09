@@ -21,7 +21,7 @@ use({
 use({
     'vim-test/vim-test',
     config = function()
-        vim.g['test#strategy'] = "asyncrun"
+        vim.g['test#strategy'] = "floaterm"
         vim.g['test#javascript#mocha#file_pattern'] = '\\v(tests?/.*|(test))\\.(js|jsx|ts|tsx)$'
         vim.g['test#javascript#jest#file_pattern'] = '\\v(__tests__/.*|(spec|test))\\.(js|jsx|ts|tsx)$'
         vim.g['test#javascript#karma#file_pattern'] = '\\v(test|spec)\\.(js|jsx|ts|tsx)$'
