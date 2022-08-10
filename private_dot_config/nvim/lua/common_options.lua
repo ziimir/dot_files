@@ -19,6 +19,7 @@ vim.opt.diffopt = vim.opt.diffopt + 'vertical'
 vim.opt.showmode = false
 vim.opt.hidden = true -- allow buffer switching without saving
 vim.opt.conceallevel = 0 -- always show all syntax symbols
+vim.opt.laststatus = 3 -- only one window has status line https://www.youtube.com/watch?v=jH5PNvJIa6o
 vim.wo.wrap = false
 
 vim.g.mapleader=',' -- leader button
