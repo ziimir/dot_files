@@ -16,6 +16,7 @@ ls.add_snippets('javascript', {
     s('de', t([[debugger;]])),
     s('cl', t([[console.log('=============================+>');]])),
     s('cll', fmt([[console.log('=============================+>', {});]], {i(0)})),
+    s('wait', t([[new Promise((resolve) => setTimeout(resolve, 3000));]])),
 
     s('im', fmt([[import {{{}}} from '{}';]], {i(0), i(1)})),
     s('ime', fmt([[import {{{}}} from 'packages/geoadv-entities/{}';]], {i(0), i(1)})),
@@ -40,6 +41,11 @@ ls.add_snippets('javascript', {
             {}
         );
     ]], {i(0)})),
+
+    s('pr', fmt([[new Promise((resolve, reject) => {{{}}});]], {i(0)})),
+    s('prcb', fmt([[(resolve, reject) => {{{}}}]], {i(0)})),
+    s('prrs', fmt([[Promise.resolve({})]], {i(0)})),
+    s('prrj', fmt([[Promise.reject({})]], {i(0)})),
 
     s('fa', fmt([[({}) => {}]], {i(1), i(0)})),
     s('fab', fmt([[
