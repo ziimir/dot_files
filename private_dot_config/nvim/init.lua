@@ -11,6 +11,7 @@ require('configs/float_term')
 require('configs/syntax')
 require('configs/ack')
 require('configs/fzf')
+--require('configs/telescope')
 require('configs/git')
 
 require('configs/code_helpers')

@@ -12,7 +12,7 @@ use({
     run = ':TSUpdate',
     config = function()
         require('nvim-treesitter.configs').setup {
-            ensure_installed = {'typescript', 'tsx', 'javascript', 'css', 'scss'},
+            ensure_installed = {'typescript', 'tsx', 'javascript', 'css', 'scss', 'lua'},
             highlight = {
                 enable = true
             },

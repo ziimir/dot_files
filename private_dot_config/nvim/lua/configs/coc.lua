@@ -4,7 +4,7 @@ use({
     'neoclide/coc.nvim',
     branch = 'release',
     config = function()
-        vim.g.coc_global_extensions = {'coc-tsserver', 'coc-spell-checker'}
+        vim.g.coc_global_extensions = {'coc-tsserver', 'coc-spell-checker', 'coc-sumneko-lua'}
 
         local bufopts = {silent = true}
         vim.keymap.set('n', '<space>h', ':call CocAction(\'doHover\')<CR>', bufopts)
@@ -28,4 +28,4 @@ use({
     end
 })
 
-use('antoinemadec/coc-fzf')
+--use('antoinemadec/coc-fzf')
