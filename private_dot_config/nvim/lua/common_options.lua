@@ -40,11 +40,6 @@ vim.api.nvim_set_keymap('n', '[q', ':cprevious<CR>', {noremap = true, silent = t
 vim.api.nvim_set_keymap('n', ']Q', ':clast<CR>', {noremap = true, silent = true})
 vim.api.nvim_set_keymap('n', '[Q', ':cfirst<CR>', {noremap = true, silent = true})
 
--- folding
-vim.opt.foldlevelstart = 99 -- start file with all folds opened
-vim.api.nvim_set_keymap('n', '<BS>', 'zc', {})
-vim.api.nvim_set_keymap('n', '<CR>', 'zo', {})
-
 -- copy filepath, inspired by https://github.com/vim-scripts/copypath.vim
 vim.api.nvim_create_user_command(
     'CopyPath',

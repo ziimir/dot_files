@@ -28,4 +28,4 @@ use({
     end
 })
 
---use('antoinemadec/coc-fzf')
+use('antoinemadec/coc-fzf')
