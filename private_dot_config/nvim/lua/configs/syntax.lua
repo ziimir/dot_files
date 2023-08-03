@@ -1,11 +1,9 @@
 require('common_fn')
 
-cmd [[autocmd BufRead,BufNewFile *.css set filetype=scss.css]]
+cmd [[autocmd BufRead,BufNewFile *.css set filetype=scss]]
 
 use('nvim-treesitter/nvim-treesitter-textobjects')
 use('windwp/nvim-ts-autotag')
-
-use('neovimhaskell/haskell-vim')
 
 use({
     'nvim-treesitter/nvim-treesitter',

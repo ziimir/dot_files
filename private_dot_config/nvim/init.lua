@@ -18,9 +18,7 @@ require('configs/fold')
 
 require('configs/code_helpers')
 require('configs/code_runners')
---require('configs/linters')
 require('configs/lsp')
---require('configs/coc')
 
 require('configs/snippets')
 require('snippets/frontend')

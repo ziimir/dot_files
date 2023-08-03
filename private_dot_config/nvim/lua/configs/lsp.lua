@@ -11,13 +11,13 @@ use({
   config = function()
     require('mason').setup()
     require('mason-lspconfig').setup({
-      ensure_installed = {'tsserver'}
+      ensure_installed = {'tsserver', 'stylelint_lsp'}
     })
 
     local bufopts = {silent = true}
-    vim.keymap.set('n', '<space>l', vim.diagnostic.open_float, bufopts)
     vim.keymap.set('n', '<space>L', ':DiagWindowShow<CR>', bufopts)
-    --vim.keymap.set('n', '<space>', vim.diagnostic.setloclist, bufopts)
+    vim.keymap.set('n', '<space>ll', vim.diagnostic.open_float, bufopts)
+    vim.keymap.set('n', '<space>lq', vim.diagnostic.setqflist, bufopts)
     vim.keymap.set('n', '[l', vim.diagnostic.goto_prev, bufopts)
     vim.keymap.set('n', ']l', vim.diagnostic.goto_next, bufopts)
 
@@ -33,7 +33,16 @@ use({
     vim.keymap.set('n', '<space>r', vim.lsp.buf.rename, bufopts)
     vim.keymap.set({'n', 'v'}, '<space>a', vim.lsp.buf.code_action, bufopts)
 
-    require('lspconfig').tsserver.setup({})
+    local lspconfig = require('lspconfig')
+    lspconfig.tsserver.setup({})
+    lspconfig.stylelint_lsp.setup({ -- https://github.com/bmatcuk/stylelint-lsp
+      settings = {
+        stylelintplus = {
+          validateOnType = false,
+          validateOnSave = true
+        }
+      }
+    })
   end
 })
 
@@ -94,6 +103,7 @@ use({
         method = null_ls.methods.DIAGNOSTICS_ON_SAVE,
       }),
       null_ls.builtins.code_actions.cspell,
+
       null_ls.builtins.diagnostics.eslint_d.with({
         method = null_ls.methods.DIAGNOSTICS_ON_SAVE,
       }),
