@@ -24,6 +24,9 @@ vim.wo.wrap = false
 
 vim.g.mapleader=',' -- leader button
 
+cmd [[set complete=]] -- no need, when nvim-cmp used
+cmd [[set completeopt=]] -- no need, when nvim-cmp used
+
 cmd [[set clipboard+=unnamedplus]]
 cmd [[set guicursor=]] -- use original cursor in nvim
 
@@ -33,12 +36,6 @@ cmd [[highlight SpecialKey ctermfg=NONE guifg=NONE]]
 
 -- clear search
 vim.api.nvim_set_keymap('n', '<leader><esc>', ':noh<CR>', {})
-
--- quickfix navigation
-vim.api.nvim_set_keymap('n', ']q', ':cnext<CR>', {noremap = true, silent = true})
-vim.api.nvim_set_keymap('n', '[q', ':cprevious<CR>', {noremap = true, silent = true})
-vim.api.nvim_set_keymap('n', ']Q', ':clast<CR>', {noremap = true, silent = true})
-vim.api.nvim_set_keymap('n', '[Q', ':cfirst<CR>', {noremap = true, silent = true})
 
 -- copy filepath, inspired by https://github.com/vim-scripts/copypath.vim
 vim.api.nvim_create_user_command(

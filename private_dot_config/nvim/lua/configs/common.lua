@@ -1,12 +1,10 @@
 require('common_fn')
 
---use('osyo-manga/vim-anzu')
-
 use('tpope/vim-sensible')
 use('kana/vim-textobj-user')
 use('kana/vim-textobj-line')
 use('svermeulen/vim-easyclip')
-use('TaDaa/vimade')
+--use('TaDaa/vimade')
 use('djoshea/vim-autoread')
 use('tpope/vim-repeat')
 use('simeji/winresizer')
@@ -40,17 +38,5 @@ use({
     'skywind3000/asyncrun.vim',
     config = function()
         vim.g.asyncrun_open = 19
-    end
-})
-
-use({
-    'yssl/QFEnter',
-    config = function()
-        vim.g.qfenter_keymap = {
-            open = {'<CR>'},
-            vopen = {'<C-v>'},
-            hopen = {'<C-x>'},
-            topen = {'<C-t>'}
-        }
     end
 })

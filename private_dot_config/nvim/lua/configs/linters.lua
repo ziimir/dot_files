@@ -12,10 +12,10 @@ use ({
         vim.g.ale_hover_cursor = 0
 
         vim.g.ale_linters = {
-            javascript = {'eslint'},
-            javascriptreact = {'eslint'},
-            typescript = {'eslint', 'tsserver'},
-            typescriptreact = {'eslint', 'tsserver'}
+            javascript = {'eslint', 'cspell'},
+            javascriptreact = {'eslint', 'cspell'},
+            typescript = {'eslint', 'tsserver', 'cspell'},
+            typescriptreact = {'eslint', 'tsserver', 'cspell'}
         }
         vim.g.ale_fixers = {
             javascript = {'eslint'},

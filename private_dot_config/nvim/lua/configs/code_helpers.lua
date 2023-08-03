@@ -4,8 +4,6 @@ require('common_fn')
 vim.api.nvim_set_keymap('n', '<leader>fc', '<ESC>/\\v^[<=>]{7}( .*|$)<CR>', {silent = true})
 
 --use('tpope/vim-apathy')
---use('sbdchd/neoformat')
---use('liuchengxu/vista.vim')
 use('tpope/vim-abolish')
 use('scrooloose/nerdcommenter')
 use('AaronLasseigne/yank-code')
