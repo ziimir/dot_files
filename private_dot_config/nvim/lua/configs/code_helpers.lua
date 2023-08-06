@@ -12,7 +12,7 @@ use('AndrewRadev/linediff.vim')
 use({
   'mattn/vim-sonictemplate',
   config = function()
-    vim.g.sonictemplate_vim_template_dir = {'~/.vim-templates'}
+    vim.g.sonictemplate_vim_template_dir = {'~/.config/nvim/sonic_templates'}
   end
 })
 

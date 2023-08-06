@@ -98,11 +98,16 @@ use({
   config = function()
     local null_ls = require('null-ls')
 
+    local cspell_config = {
+      method = null_ls.methods.DIAGNOSTICS_ON_SAVE,
+      find_json = function()
+        return os.getenv('HOME') .. '/.config/nvim/cspell.json'
+      end
+    }
+
     local sources = {
-      null_ls.builtins.diagnostics.cspell.with({
-        method = null_ls.methods.DIAGNOSTICS_ON_SAVE,
-      }),
-      null_ls.builtins.code_actions.cspell,
+      null_ls.builtins.diagnostics.cspell.with({config = cspell_config}),
+      null_ls.builtins.code_actions.cspell.with({config = cspell_config}),
 
       null_ls.builtins.diagnostics.eslint_d.with({
         method = null_ls.methods.DIAGNOSTICS_ON_SAVE,
