@@ -95,8 +95,10 @@ use({
 
 use({
   'jose-elias-alvarez/null-ls.nvim',
+  requires = {'davidmh/cspell.nvim'},
   config = function()
     local null_ls = require('null-ls')
+    local cspell = require('cspell')
 
     local cspell_config = {
       method = null_ls.methods.DIAGNOSTICS_ON_SAVE,
@@ -106,8 +108,8 @@ use({
     }
 
     local sources = {
-      null_ls.builtins.diagnostics.cspell.with({config = cspell_config}),
-      null_ls.builtins.code_actions.cspell.with({config = cspell_config}),
+      cspell.diagnostics.with({config = cspell_config}),
+      cspell.code_actions.with({config = cspell_config}),
 
       null_ls.builtins.diagnostics.eslint_d.with({
         method = null_ls.methods.DIAGNOSTICS_ON_SAVE,
@@ -118,7 +120,6 @@ use({
     null_ls.setup({sources = sources})
   end
 })
-
 use({
   'cseickel/diagnostic-window.nvim',
   requires = {'MunifTanjim/nui.nvim'}

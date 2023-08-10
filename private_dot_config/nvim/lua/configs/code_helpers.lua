@@ -79,6 +79,18 @@ use({
       end,
       {nargs = 0}
     )
+
+    vim.api.nvim_create_user_command(
+      "DebugFile",
+      function(opts)
+        vim.g["test#javascript#jest#executable"] = 'node --inspect-brk node_modules/.bin/jest ' .. opts.args
+        vim.cmd[[
+          TestFile
+          unlet g:test#javascript#jest#executable
+        ]]
+      end,
+      {nargs = 1}
+    )
   end
 })
 
