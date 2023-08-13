@@ -31,8 +31,8 @@ use({
         win_height = 999
       },
       func_map = {
-          pscrollup = '<C-u>',
-          pscrolldown = '<C-d>',
+          pscrollup = '<C-y>',
+          pscrolldown = '<C-e>',
           prevfile = '<C-f>[',
           nextfile = '<C-f>]'
       }

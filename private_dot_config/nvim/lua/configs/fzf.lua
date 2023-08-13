@@ -2,13 +2,13 @@ require('common_fn')
 
 use({
     'junegunn/fzf.vim',
-    requires = '/usr/local/opt/fzf',
+    requires = '/opt/homebrew/opt/fzf',
     config = function()
         vim.g.fzf_preview_window = {'up:50%', 'ctrl-t'}
         vim.g.fzf_layout = {down = '100%'}
 
         -- setting up fzf move preview
-        vim.env.FZF_DEFAULT_OPTS = '--bind ctrl-d:preview-half-page-down --bind ctrl-u:preview-half-page-up'
+        vim.env.FZF_DEFAULT_OPTS = '--bind ctrl-e:preview-half-page-down --bind ctrl-y:preview-half-page-up'
         -- fzf by default use bat if it is available, setting up light theme here
         vim.env.BAT_THEME = 'GitHub'
 

@@ -6,9 +6,15 @@ use('kana/vim-textobj-line')
 use('svermeulen/vim-easyclip')
 use('djoshea/vim-autoread')
 use('tpope/vim-repeat')
-use('simeji/winresizer')
 use('machakann/vim-sandwich')
 use('https://github.com/jiangmiao/auto-pairs.git')
+
+use({
+  'simeji/winresizer',
+  config = function()
+    vim.g.winresizer_start_key = '<leader>e'
+  end
+})
 
 use({
     'rhysd/clever-f.vim',
