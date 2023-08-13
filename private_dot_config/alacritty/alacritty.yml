@@ -1,0 +1,67 @@
+window:
+  dimensions:
+    columns: 0
+    lines: 0
+  padding:
+    x: 2
+    y: 2
+  start_maximized: false
+
+scrolling:
+  history: 10000
+  multiplier: 3
+
+font:
+  normal:
+    #family: ProFontIIx Nerd Font Mono
+    family: Hurmit Nerd Font Mono
+  bold:
+    #family: ProFontIIx Nerd Font Mono
+    family: Hurmit Nerd Font Mono
+  italic:
+    #family: ProFontIIx Nerd Font Mono
+    family: Hurmit Nerd Font Mono
+  size: 20
+  offset:
+    x: 0
+    y: -1
+  glyph_offset:
+    x: 0
+    y: 0
+
+# Colors (Seoul256)
+colors:
+  primary:
+    background: '0x3a3a3a'
+    foreground: '0xd0d0d0'
+
+  cursor:
+    text: '0xffffff'
+    cursor: '0xff00ff'
+
+  normal:
+    black:   '0x4e4e4e'
+    red:     '0xd68787'
+    green:   '0x5f865f'
+    yellow:  '0xd8af5f'
+    blue:    '0x85add4'
+    magenta: '0xd7afaf'
+    cyan:    '0x87afaf'
+    white:   '0xd0d0d0'
+
+  bright:
+    black:   '0x626262'
+    red:     '0xd75f87'
+    green:   '0x87af87'
+    yellow:  '0xffd787'
+    blue:    '0xadd4fb'
+    magenta: '0xffafaf'
+    cyan:    '0x87d7d7'
+    white:   '0xe4e4e4'
+
+  indexed_colors: []
+
+key_bindings:
+  - { key: Q,       mods: Command, action: None             }
+  - { key: W,       mods: Command, action: None             }
+  - { key: N,       mods: Command, command: { program: "open", args: ["-n", "-a", "Alacritty"] } }
