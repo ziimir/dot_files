@@ -17,6 +17,7 @@ require('configs/git')
 require('configs/fold')
 
 require('configs/code_helpers')
+require('configs/code_testing')
 require('configs/code_runners')
 require('configs/lsp')
 

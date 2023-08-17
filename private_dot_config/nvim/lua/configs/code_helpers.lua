@@ -17,88 +17,46 @@ use({
 })
 
 use({
-  --'~/work/root-climber.nvim',
-  'ziimir/root-climber.nvim',
+  'Wansmer/treesj', -- instead of AndrewRadev/splitjoin.vim
   config = function()
-    vim.g["root_climber#always_confirm"] = 0
+    local lang_utils = require('treesj.langs.utils')
+    local join_split_opts = {
+      split = {last_separator = false},
+      join = {last_separator = false, space_in_brackets = false},
+    }
+    local js_lang_opts = {
+      named_imports = lang_utils.set_preset_for_dict(join_split_opts),
+      object = lang_utils.set_preset_for_dict(join_split_opts),
+      array = lang_utils.set_preset_for_list(join_split_opts),
+    }
+    local ts_lang_opts = {
+      named_imports = lang_utils.set_preset_for_dict(join_split_opts),
+      object = lang_utils.set_preset_for_dict(join_split_opts),
+      array = lang_utils.set_preset_for_list(join_split_opts),
 
-    vim.api.nvim_create_user_command(
-      "TestRootClimber",
-      function(args_table)
-        require("root-climber").run(
-          args_table.args,
-          function(checked)
-            if checked == nil then
-              print("nothing")
-            else
-              print(checked)
-            end
-          end
-        )
-      end,
-      {nargs = 1}
-    )
+      -- for ts only
+      tuple_type = lang_utils.set_preset_for_dict(join_split_opts),
+      enum_body = lang_utils.set_preset_for_dict(join_split_opts),
+      type_parameters = lang_utils.set_preset_for_args({split = {last_separator = false}}),
+      type_arguments = lang_utils.set_preset_for_args({split = {last_separator = false}}),
+      object_type = lang_utils.set_preset_for_dict({
+        both = {separator = ';', last_separator = true},
+        join = {space_in_brackets = false}
+      })
+    }
 
-    vim.api.nvim_create_user_command(
-      "FzfTestRootClimber",
-      function(args_table)
-        require("root-climber").fzf_run(
-          args_table.args,
-          function(checked)
-            if checked == nil then
-              print("nothing")
-            else
-              print(checked)
-            end
-          end
-        )
-      end,
-      {nargs = 1}
-    )
-  end
-})
+    require('treesj').setup({
+      use_default_keymaps = false,
+      check_syntax_error = false,
+      langs = {
+        javascript = js_lang_opts,
+        typescript = ts_lang_opts,
+        tsx = ts_lang_opts
+      }
+    })
 
-use({
-  'vim-test/vim-test',
-  config = function()
-    vim.g['test#strategy'] = "floaterm"
-    vim.g['test#javascript#mocha#file_pattern'] = '\\v(tests?/.*|(test))\\.(js|jsx|ts|tsx)$'
-    vim.g['test#javascript#jest#file_pattern'] = '\\v(__tests__/.*|(spec|test))\\.(js|jsx|ts|tsx)$'
-    vim.g['test#javascript#karma#file_pattern'] = '\\v(test|spec)\\.(js|jsx|ts|tsx)$'
-    vim.g['test#javascript#jasmine#file_pattern'] = '\\v^spec/.*spec\\.(js|jsx|ts|tsx)$'
-
-    vim.api.nvim_create_user_command(
-      "Jest",
-      function()
-        require("root-climber").fzf_run(
-          "*.jest.config.js",
-          function(path)
-            vim.api.nvim_command("TestFile --config " .. path)
-          end
-        )
-      end,
-      {nargs = 0}
-    )
-
-    vim.api.nvim_create_user_command(
-      "DebugFile",
-      function(opts)
-        vim.g["test#javascript#jest#executable"] = 'node --inspect-brk node_modules/.bin/jest ' .. opts.args
-        vim.cmd[[
-          TestFile
-          unlet g:test#javascript#jest#executable
-        ]]
-      end,
-      {nargs = 1}
-    )
-  end
-})
-
-use({
-  'AndrewRadev/splitjoin.vim',
-  config = function()
-    vim.g.splitjoin_html_attributes_bracket_on_new_line = 0
-    vim.g.splitjoin_curly_brace_padding = 0
+    vim.keymap.set('n', 'gJ', require('treesj').join)
+    vim.keymap.set('n', 'gS', require('treesj').split)
   end
 })
 
