@@ -14,6 +14,9 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
+# fzf keybindings
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
 # no ctrl + d
 set -o ignoreeof
 
@@ -63,6 +66,14 @@ _fzf_git_branches() {
   sed 's/^..//' | cut -d' ' -f1 |
   sed 's#^remotes/##'
 }
+_run_fzf_git_branches() {
+  local result=$(_fzf_git_branches);
+  zle reset-prompt;
+  LBUFFER+=$result; # taken from https://github.com/junegunn/fzf-git.sh/blob/7426d6a4df9a98c6f5b68352462601f4a7fc5611/fzf-git.sh#L255
+}
+
+zle -N _run_fzf_git_branches
+bindkey '^gb' _run_fzf_git_branches
 
 _fzf_git_files() {
   _fzf_git_check || return
@@ -71,12 +82,14 @@ _fzf_git_files() {
     --preview '(git diff --color=always -- {-1} | sed 1,4d; cat {-1}) | head -500' |
   cut -c4- | sed 's/.* -> //'
 }
+_run_fzf_git_files() {
+  local result=$(_fzf_git_files);
+  zle reset-prompt;
+  LBUFFER+=$result;
+}
 
-zle -N _fzf_git_branches
-bindkey '^gb' _fzf_git_branches
-
-zle -N _fzf_git_files
-bindkey '^gf' _fzf_git_files
+zle -N _run_fzf_git_files
+bindkey '^gf' _run_fzf_git_files
 
 # fzf npm scripts bindings
 _npm_scripts() {
@@ -86,9 +99,14 @@ _npm_scripts() {
     --preview-window wrap \
     --preview "echo \"${npm_scripts}\" | grep {1}! | cut -d! -f2"
 }
+_run_npm_scripts() {
+  local result=$(_npm_scripts);
+  zle reset-prompt;
+  LBUFFER+=$result;
+}
 
-zle -N _npm_scripts
-bindkey '^ns' _npm_scripts
+zle -N _run_npm_scripts
+bindkey '^ns' _run_npm_scripts
 
 # fzf makefile phony bindings
 _makefile_phony() {
@@ -96,9 +114,14 @@ _makefile_phony() {
     --preview-window wrap \
     --preview "cat Makefile | sed -n '/^\.PHONY: {1}$/,/^$/p'"
 }
+_run_makefile_phony() {
+  local result=$(_makefile_phony);
+  zle reset-prompt;
+  LBUFFER+=$result;
+}
 
-zle -N _makefile_phony
-bindkey '^mf' _makefile_phony
+zle -N _run_makefile_phony
+bindkey '^mf' _run_makefile_phony
 
 # fzf tmux
 ts() { # create or switch session
