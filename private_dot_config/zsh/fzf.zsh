@@ -44,7 +44,15 @@ fzf_open_zle() {
     zle accept-line;
 }
 zle -N fzf_open_zle
-bindkey "^j" fzf_open_zle
+bindkey "\ej" fzf_open_zle
+
+back() { BUFFER="cd .."; zle accept-line; }
+zle -N back
+bindkey "\eh" back
+
+autoload -z edit-command-line
+zle -N edit-command-line
+bindkey "\ei" edit-command-line
 
 # fzf npm scripts bindings
 _npm_scripts() {

@@ -1,11 +1,6 @@
 window:
-  dimensions:
-    columns: 0
-    lines: 0
-  padding:
-    x: 2
-    y: 2
-  start_maximized: false
+  startup_mode: Maximized
+  option_as_alt: Both
 
 scrolling:
   history: 10000
