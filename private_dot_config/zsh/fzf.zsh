@@ -6,6 +6,24 @@ function projects() {
 }
 alias pr=projects
 
+function configs() {
+    line_break=$'\n'
+
+    config=$(ls ~/.config/)
+    config=$config$line_break$'.zshrc'
+    config=$(echo "$config" | fzf)
+
+    if [ "$config" = '.zshrc' ]; then
+        cd $HOME
+        nvim "$HOME/.zshrc"
+    else
+        config="$HOME/.config/$config"
+        cd $config
+        nvim .
+    fi
+}
+alias cf=configs
+
 fzf_open() {
     target=$(ls -d * | fzf)
     if [ -z "$target" ];
