@@ -17,6 +17,11 @@ export NVM_DIR="$HOME/.nvm"
 # fzf keybindings
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+# various scripts
+for file in ~/.config/zsh/*; do
+  source "$file"
+done
+
 # no ctrl + d
 set -o ignoreeof
 
@@ -29,112 +34,23 @@ export MANPAGER="nvim +Man!" # man in vim
 export EDITOR="nvim"
 alias vim="nvim"
 
+setopt PROMPT_SUBST
+export GIT_PS1_SHOWDIRTYSTATE=1
+export GIT_PS1_SHOWSTASHSTATE=1
+export GIT_PS1_SHOWUNTRACKEDFILES=1
+
 # prompt config
 PROMPT='%{$fg[yellow]$fg[white]$bg[yellow]%}%n%{$bg[cyan]$fg[yellow]%}%{$bg[cyan]$fg[white]%}%c%{$reset_color%}$(check_git_repo)$(prompt_end)'
 RPROMPT=''
-
-ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg[cyan]$bg[red]$fg[white]$bg[red]%}%{$fg[white]%}"
-ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%} "
-ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg_bold[white] *$reset_color$fg[red]%}"
-ZSH_THEME_GIT_PROMPT_CLEAN="%{$reset_color$fg[red]%}"
 
 function check_git_repo() {
   if [ -z $(git rev-parse --git-dir 2> /dev/null) ]; then
     echo "%{$reset_color$fg[cyan]$reset_color%}"
   else
-    echo "$(git_prompt_info)"
+    echo "%{$fg[cyan]$bg[red]$fg[white]$bg[red] $(__git_ps1 ' %s ')$reset_color$fg[red]$reset_color%}"
   fi
 }
 
 function prompt_end() {
   echo "%{$reset_color%}"$'\n'"$ "
-}
-
-# FZF
-# fzf git bindings
-_fzf_git_check() {
-  git rev-parse HEAD > /dev/null 2>&1 && return
-
-  [[ -n $TMUX ]] && tmux display-message "Not in a git repository"
-  return 1
-}
-
-_fzf_git_branches() {
-  _fzf_git_check || return
-  git branch -a --color=always | grep -v '/HEAD\s' | sort |
-  fzf --height 50% "$@" --border -down --ansi --multi --tac |
-  sed 's/^..//' | cut -d' ' -f1 |
-  sed 's#^remotes/##'
-}
-_run_fzf_git_branches() {
-  local result=$(_fzf_git_branches);
-  zle reset-prompt;
-  LBUFFER+=$result; # taken from https://github.com/junegunn/fzf-git.sh/blob/7426d6a4df9a98c6f5b68352462601f4a7fc5611/fzf-git.sh#L255
-}
-
-zle -N _run_fzf_git_branches
-bindkey '^gb' _run_fzf_git_branches
-
-_fzf_git_files() {
-  _fzf_git_check || return
-  git -c color.status=always status --short |
-  fzf -m --ansi --nth 2..,.. \
-    --preview '(git diff --color=always -- {-1} | sed 1,4d; cat {-1}) | head -500' |
-  cut -c4- | sed 's/.* -> //'
-}
-_run_fzf_git_files() {
-  local result=$(_fzf_git_files);
-  zle reset-prompt;
-  LBUFFER+=$result;
-}
-
-zle -N _run_fzf_git_files
-bindkey '^gf' _run_fzf_git_files
-
-# fzf npm scripts bindings
-_npm_scripts() {
-  local declare npm_scripts=$(npm run | grep -v '^\w' | grep -v '^$' | sed 's/^[ ]*//' | paste -d! - -)
-
-  echo "$npm_scripts" | cut -d! -f1 | fzf \
-    --preview-window wrap \
-    --preview "echo \"${npm_scripts}\" | grep {1}! | cut -d! -f2"
-}
-_run_npm_scripts() {
-  local result=$(_npm_scripts);
-  zle reset-prompt;
-  LBUFFER+=$result;
-}
-
-zle -N _run_npm_scripts
-bindkey '^ns' _run_npm_scripts
-
-# fzf makefile phony bindings
-_makefile_phony() {
-  echo "$(grep .PHONY Makefile | cut -d ' ' -f2)" | fzf \
-    --preview-window wrap \
-    --preview "cat Makefile | sed -n '/^\.PHONY: {1}$/,/^$/p'"
-}
-_run_makefile_phony() {
-  local result=$(_makefile_phony);
-  zle reset-prompt;
-  LBUFFER+=$result;
-}
-
-zle -N _run_makefile_phony
-bindkey '^mf' _run_makefile_phony
-
-# fzf tmux
-ts() { # create or switch session
-  [[ -n "$TMUX" ]] && change="switch-client" || change="attach-session"
-  if [ $1 ]; then
-    tmux $change -t "$1" 2>/dev/null || (tmux new-session -d -s $1 && tmux $change -t "$1"); return
-  fi
-  session=$(tmux list-sessions -F "#{session_name}" 2>/dev/null | fzf --exit-0) &&  tmux $change -t "$session" || echo "No sessions found."
-}
-
-tk() { # kill session
-  local session
-  session=$(tmux list-sessions -F "#{session_name}" | \
-    fzf --query="$1" --select-1 --exit-0) &&
-  tmux kill-session -t "$session"
 }
