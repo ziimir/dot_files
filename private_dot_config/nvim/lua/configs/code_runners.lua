@@ -1,7 +1,7 @@
 -- HASKELL
 -- execute
 vim.api.nvim_create_user_command(
-    'HaskellEx',
+    'HaskellExe',
     function()
         cmd [[:AsyncRun -mode=term -pos=floaterm ghc $(VIM_FILEPATH) && $(VIM_PATHNOEXT)]]
     end,
@@ -10,7 +10,7 @@ vim.api.nvim_create_user_command(
 
 -- repl with loaded file
 vim.api.nvim_create_user_command(
-    'HaskellRunInt',
+    'HaskellREPL',
     function()
         cmd [[:AsyncRun -mode=term -pos=floaterm ghci $(VIM_FILEPATH)]]
     end,
@@ -21,8 +21,8 @@ local haskellCodeHelpersGroup = vim.api.nvim_create_augroup('HaskellCodeHelpersG
 vim.api.nvim_create_autocmd('FileType', {
     pattern = {'haskell'},
     callback = function()
-        vim.keymap.set('n', '<space>1', ':HaskellRunInt<CR>', {silent = true})
-        vim.keymap.set('n', '<space>2', ':HaskellEx<CR>', {silent = true})
+        vim.keymap.set('n', '<space>1', ':HaskellExe<CR>', {silent = true})
+        vim.keymap.set('n', '<space>2', ':HaskellREPL<CR>', {silent = true})
     end,
     group = haskellCodeHelpersGroup
 })
@@ -30,7 +30,7 @@ vim.api.nvim_create_autocmd('FileType', {
 -- NODE
 -- execute
 vim.api.nvim_create_user_command(
-    'NodeEx',
+    'NodeExe',
     function()
         cmd [[:AsyncRun -mode=term -pos=floaterm node $(VIM_FILEPATH)]]
     end,
@@ -39,7 +39,7 @@ vim.api.nvim_create_user_command(
 
 -- repl with loaded file
 vim.api.nvim_create_user_command(
-    'NodeRunInt',
+    'NodeREPL',
     function()
         cmd [[:AsyncRun -mode=term -pos=floaterm node -i -e "$(< $(VIM_FILEPATH))"]]
     end,
@@ -50,8 +50,37 @@ local nodeCodeHelpersGroup = vim.api.nvim_create_augroup("NodeCodeHelpersGroup",
 vim.api.nvim_create_autocmd("FileType", {
     pattern = {'javascript'},
     callback = function()
-        vim.keymap.set('n', '<space>1', ':NodeRunInt<CR>', {silent = true})
-        vim.keymap.set('n', '<space>2', ':NodeEx<CR>', {silent = true})
+        vim.keymap.set('n', '<space>1', ':NodeExe<CR>', {silent = true})
+        vim.keymap.set('n', '<space>2', ':NodeREPL<CR>', {silent = true})
     end,
     group = nodeCodeHelpersGroup
+})
+
+-- C
+-- compile
+vim.api.nvim_create_user_command(
+    'ClangCmp',
+    function()
+        cmd [[:AsyncRun -cwd=$(VIM_FILEDIR) gcc $(VIM_FILEPATH) -o $(VIM_FILEDIR)/$(VIM_FILENOEXT)]]
+    end,
+    {nargs = 0}
+)
+
+-- execute
+vim.api.nvim_create_user_command(
+    'ClangExe',
+    function()
+        cmd [[:AsyncRun -mode=term -pos=floaterm -cwd=$(VIM_FILEDIR) $(VIM_FILEDIR)/$(VIM_FILENOEXT)]]
+    end,
+    {nargs = 0}
+)
+
+local clangCodeHelpersGroup = vim.api.nvim_create_augroup("ClangCodeHelpersGroup", { clear = true })
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = {'c'},
+    callback = function()
+        vim.keymap.set('n', '<space>0', ':ClangCmp<CR>', {silent = true})
+        vim.keymap.set('n', '<space>1', ':ClangExe<CR>', {silent = true})
+    end,
+    group = clangCodeHelpersGroup
 })

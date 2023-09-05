@@ -4,6 +4,9 @@ vim.diagnostic.config({
   virtual_text = false
 })
 
+--vim.lsp.set_log_level("debug")
+--for get log run :lua vim.cmd('e'..vim.lsp.get_log_path())
+
 use({'williamboman/mason.nvim'})
 use({'williamboman/mason-lspconfig.nvim'})
 use({
@@ -11,7 +14,7 @@ use({
   config = function()
     require('mason').setup()
     require('mason-lspconfig').setup({
-      ensure_installed = {'tsserver', 'stylelint_lsp'}
+      ensure_installed = {'tsserver', 'stylelint_lsp', 'clangd'}
     })
 
     local bufopts = {silent = true}
@@ -35,6 +38,7 @@ use({
 
     local lspconfig = require('lspconfig')
     lspconfig.tsserver.setup({})
+    lspconfig.clangd.setup({})
     lspconfig.stylelint_lsp.setup({ -- https://github.com/bmatcuk/stylelint-lsp
       settings = {
         stylelintplus = {

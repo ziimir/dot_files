@@ -18,7 +18,9 @@ use({
               'scss',
               'lua',
               'markdown',
-              'markdown_inline'
+              'markdown_inline',
+              'c',
+              'cpp'
             },
             highlight = {
                 enable = true

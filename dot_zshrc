@@ -54,3 +54,5 @@ function check_git_repo() {
 function prompt_end() {
   echo "%{$reset_color%}"$'\n'"$ "
 }
+
+alias scan_nas="nmap -sn 192.168.1.0/24"
