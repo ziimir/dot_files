@@ -8,6 +8,8 @@ source $ZSH/oh-my-zsh.sh
 
 # homebrew fix on apple silicon mac
 eval "$(/opt/homebrew/bin/brew shellenv)"
+# for rosetta compatible run
+# eval "$(/usr/local/bin/brew shellenv)"
 
 # node version manager
 export NVM_DIR="$HOME/.nvm"

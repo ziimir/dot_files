@@ -70,7 +70,7 @@ vim.api.nvim_create_user_command(
 vim.api.nvim_create_user_command(
     'ClangExe',
     function()
-        cmd [[:AsyncRun -mode=term -pos=floaterm -cwd=$(VIM_FILEDIR) $(VIM_FILEDIR)/$(VIM_FILENOEXT)]]
+        cmd [[:AsyncRun -mode=term -pos=floaterm -cwd=$(VIM_FILEDIR) gcc $(VIM_FILEPATH) -o $(VIM_FILEDIR)/$(VIM_FILENOEXT) && $(VIM_FILEDIR)/$(VIM_FILENOEXT)]]
     end,
     {nargs = 0}
 )
