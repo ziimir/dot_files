@@ -21,8 +21,8 @@ local haskellCodeHelpersGroup = vim.api.nvim_create_augroup('HaskellCodeHelpersG
 vim.api.nvim_create_autocmd('FileType', {
     pattern = {'haskell'},
     callback = function()
-        vim.keymap.set('n', '<space>1', ':HaskellExe<CR>', {silent = true})
-        vim.keymap.set('n', '<space>2', ':HaskellREPL<CR>', {silent = true})
+        vim.keymap.set('n', '<F8>', ':HaskellExe<CR>', {silent = true})
+        vim.keymap.set('n', '<F9>', ':HaskellREPL<CR>', {silent = true})
     end,
     group = haskellCodeHelpersGroup
 })
@@ -50,8 +50,8 @@ local nodeCodeHelpersGroup = vim.api.nvim_create_augroup("NodeCodeHelpersGroup",
 vim.api.nvim_create_autocmd("FileType", {
     pattern = {'javascript'},
     callback = function()
-        vim.keymap.set('n', '<space>1', ':NodeExe<CR>', {silent = true})
-        vim.keymap.set('n', '<space>2', ':NodeREPL<CR>', {silent = true})
+        vim.keymap.set('n', '<F8>', ':NodeExe<CR>', {silent = true})
+        vim.keymap.set('n', '<F9>', ':NodeREPL<CR>', {silent = true})
     end,
     group = nodeCodeHelpersGroup
 })
@@ -79,8 +79,8 @@ local clangCodeHelpersGroup = vim.api.nvim_create_augroup("ClangCodeHelpersGroup
 vim.api.nvim_create_autocmd("FileType", {
     pattern = {'c'},
     callback = function()
-        vim.keymap.set('n', '<space>0', ':ClangCmp<CR>', {silent = true})
-        vim.keymap.set('n', '<space>1', ':ClangExe<CR>', {silent = true})
+        vim.keymap.set('n', '<F7>', ':ClangCmp<CR>', {silent = true})
+        vim.keymap.set('n', '<F8>', ':ClangExe<CR>', {silent = true})
     end,
     group = clangCodeHelpersGroup
 })
