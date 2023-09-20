@@ -37,6 +37,9 @@ cmd [[highlight SpecialKey ctermfg=NONE guifg=NONE]]
 -- clear search
 vim.api.nvim_set_keymap('n', '<leader><esc>', ':noh<CR>', {})
 
+-- ctrl+a like in terminal
+vim.api.nvim_set_keymap('c', '<C-a>', '<Home>', {})
+
 -- copy filepath, inspired by https://github.com/vim-scripts/copypath.vim
 vim.api.nvim_create_user_command(
     'CopyPath',
