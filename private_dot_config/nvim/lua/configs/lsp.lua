@@ -7,6 +7,13 @@ vim.diagnostic.config({
 --vim.lsp.set_log_level("debug")
 --for get log run :lua vim.cmd('e'..vim.lsp.get_log_path())
 
+-- install via mason:
+-- prettier
+-- clangd
+-- cspell
+-- eslint_d
+-- stylelint-lsp
+-- typescript-language-servert
 use({'williamboman/mason.nvim'})
 use({'williamboman/mason-lspconfig.nvim'})
 use({
