@@ -16,7 +16,7 @@ font:
   italic:
     #family: ProFontIIx Nerd Font Mono
     family: Hurmit Nerd Font Mono
-  size: 20
+  size: 25
   offset:
     x: 0
     y: -1
@@ -60,3 +60,5 @@ key_bindings:
   - { key: Q,       mods: Command, action: None             }
   - { key: W,       mods: Command, action: None             }
   - { key: N,       mods: Command, command: { program: "open", args: ["-n", "-a", "Alacritty"] } }
+  - { key: Left,    mods: Alt,     chars: "\x1bb"                       } # Skip word left
+  - { key: Right,   mods: Alt,     chars: "\x1bf"                       } # Skip word right
