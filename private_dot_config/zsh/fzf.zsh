@@ -85,3 +85,7 @@ _run_makefile_phony() {
 
 zle -N _run_makefile_phony
 bindkey '^mf' _run_makefile_phony
+
+ls_la() { ls -la }
+zle -N ls_la
+bindkey "\el" ls_la

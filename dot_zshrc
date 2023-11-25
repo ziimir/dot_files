@@ -41,6 +41,9 @@ export GIT_PS1_SHOWDIRTYSTATE=1
 export GIT_PS1_SHOWSTASHSTATE=1
 export GIT_PS1_SHOWUNTRACKEDFILES=1
 
+# PATH
+export PATH=$PATH:~/.local/bin
+
 # prompt config
 PROMPT='%{$fg[yellow]$fg[white]$bg[yellow]%}%n%{$bg[cyan]$fg[yellow]%}%{$bg[cyan]$fg[white]%}%c%{$reset_color%}$(check_git_repo)$(prompt_end)'
 RPROMPT=''
