@@ -26,6 +26,9 @@ cat "$file" \
     | sed '/#/d' \
     | sed 's/\t.*//' \
     | sed 's/(.*)//' \
+    | sed 's/^\ *//' \
+    | sed 's/\ *$//' \
+    | sed "s/['?]*//g" \
     | sed 's/\ /\\ /g' \
     | xargs pronunciation-finder --dictionary oxford --path "./$out_dir"
 
@@ -33,7 +36,7 @@ echo "RENAMING FILES"
 
 cd "$out_dir"
 
-for file in ./*
+for file in *
 do
     original=$(basename "$file")
     renamed=$(echo "$original" | sed 's/\ \|.*\././')
