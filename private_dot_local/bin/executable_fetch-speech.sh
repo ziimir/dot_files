@@ -26,11 +26,12 @@ cat "$file" \
     | sed '/#/d' \
     | sed 's/\t.*//' \
     | sed 's/(.*)//' \
+    | sed 's/\ /\\ /g' \
     | xargs pronunciation-finder --dictionary oxford --path "./$out_dir"
 
 echo "RENAMING FILES"
 
-cd $out_dir
+cd "$out_dir"
 
 for file in ./*
 do

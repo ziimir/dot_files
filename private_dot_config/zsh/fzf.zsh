@@ -46,14 +46,6 @@ fzf_open_zle() {
 zle -N fzf_open_zle
 bindkey "\ej" fzf_open_zle
 
-back() { BUFFER="cd .."; zle accept-line; }
-zle -N back
-bindkey "\eh" back
-
-autoload -z edit-command-line
-zle -N edit-command-line
-bindkey "\ei" edit-command-line
-
 # fzf npm scripts bindings
 _npm_scripts() {
   local declare npm_scripts=$(npm run | grep -v '^\w' | grep -v '^$' | sed 's/^[ ]*//' | paste -d! - -)
@@ -85,7 +77,3 @@ _run_makefile_phony() {
 
 zle -N _run_makefile_phony
 bindkey '^mf' _run_makefile_phony
-
-ls_la() { ls -la }
-zle -N ls_la
-bindkey "\el" ls_la
