@@ -23,7 +23,7 @@ mkdir "./$out_dir"
 echo "FETCHING FILES"
 
 cat "$file" \
-    | sed '/#/d' \
+    | sed '/^#/d' \
     | sed 's/\t.*//' \
     | sed 's/(.*)//' \
     | sed 's/^\ *//' \
