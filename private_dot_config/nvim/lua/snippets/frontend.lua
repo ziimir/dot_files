@@ -19,13 +19,14 @@ ls.add_snippets('javascript', {
     s('wait', t([[new Promise((resolve) => setTimeout(resolve, 3000));]])),
 
     s('im', fmt([[import {{{}}} from '{}';]], {i(0), i(1)})),
-    s('ime', fmt([[import {{{}}} from 'packages/geoadv-entities/{}';]], {i(0), i(1)})),
     s('imu', fmt([[import {} from 'packages/ui/{}';]], {
         i(1),
         f(function(arg)
             return camel_case_to_kebab_case(arg[1][1])
         end, {1})
     })),
+    s('ex', fmt([[export {}]], {i(0)})),
+    s('ef', fmt([[export {{{}}} from '{}';]], {i(0), i(1)})),
 
     s('req', fmt([[const {} = require('{}');]], {i(0), i(1)})),
     s('dreq', fmt([[const {{{}}} = require('{}');]], {i(0), i(1)})),
@@ -64,7 +65,17 @@ ls.add_snippets('javascript', {
             {}
             expect().toBe();
         }});
-    ]], {i(1), i(0)}))
+    ]], {i(1), i(0)})),
+
+    s('//', fmt([[/** {} */]], {i(0)})),
+    s('///', fmt([[
+        /**
+         *  {}
+         */
+    ]], {i(0)})),
+    s('/p', fmt([[@param {}]], {i(0)})),
+    s('/r', fmt([[@return {}]], {i(0)})),
+    s('/k', fmt([[@kind {}]], {i(0)})),
 })
 
 ls.filetype_extend('javascriptreact', {'javascript'})
