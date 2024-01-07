@@ -1,1 +1,1 @@
-export * from '{{_cursor_}}';
+export {} from "{{_cursor_}}";
