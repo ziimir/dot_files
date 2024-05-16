@@ -1,0 +1,10 @@
+{
+  "suggest.noselect": true,
+  "coc.preferences.useQuickfixForLocations": true,
+  "cSpellExt.enableDictionaries": ["russian"],
+  "cSpell.language": "en,ru",
+  "cSpell.userWords": [
+    "fantlab",
+    "reduxjs"
+  ]
+}

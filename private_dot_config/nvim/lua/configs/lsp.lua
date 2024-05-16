@@ -82,11 +82,14 @@ use ({
 })
 
 use('hrsh7th/cmp-nvim-lsp'); -- LSP source for nvim-cmp
-use('hrsh7th/cmp-nvim-lsp-signature-help');
 use({
   'hrsh7th/nvim-cmp', -- Autocompletion plugin
   config = function()
     local cmp = require('cmp')
+
+    cmd [[set completeopt=menu,menuone,noselect]]
+    cmd [[set complete=]]
+
     cmp.setup({
       mapping = cmp.mapping.preset.insert({
         ['<C-u>'] = cmp.mapping.scroll_docs(-4),
@@ -96,9 +99,9 @@ use({
         ['<CR>'] = cmp.mapping.confirm({select = true})
       }),
       sources = {
+        {name = 'path'},
         {name = 'nvim_lsp'},
-        {name = 'nvim_lsp_signature_help'},
-        {name = 'buffer'}
+        {name = 'buffer'},
       }
     })
   end

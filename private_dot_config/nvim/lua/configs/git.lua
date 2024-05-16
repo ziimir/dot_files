@@ -9,7 +9,7 @@ use({
         vim.g.gitgutter_sign_removed_first_line = "" -- f458
         vim.g.gitgutter_sign_modified_removed = "" -- f459
 
-        vim.opt.updatetime = 100
+        vim.opt.updatetime = 300
 
         vim.keymap.set('n', ']h', '<Plug>(GitGutterNextHunk)', {})
         vim.keymap.set('n', '[h', '<Plug>(GitGutterPrevHunk)', {})

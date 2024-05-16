@@ -2,6 +2,7 @@ require('common_fn')
 
 -- no backup
 vim.opt.backup = false
+vim.opt.writebackup = false
 vim.opt.wb = false
 vim.opt.swapfile = false
 
@@ -23,9 +24,6 @@ vim.opt.laststatus = 3 -- only one window has status line https://www.youtube.co
 vim.wo.wrap = false
 
 vim.g.mapleader=',' -- leader button
-
-cmd [[set complete=]] -- no need, when nvim-cmp used
-cmd [[set completeopt=]] -- no need, when nvim-cmp used
 
 cmd [[set clipboard+=unnamedplus]]
 cmd [[set guicursor=]] -- use original cursor in nvim

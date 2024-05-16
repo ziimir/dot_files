@@ -20,3 +20,35 @@ use({
         vim.api.nvim_set_keymap('n', '<C-\\>', ':NERDTreeFind<CR>', {noremap = true})
     end
 })
+
+use({
+  'stevearc/oil.nvim',
+  config = function()
+    local oil = require('oil')
+    oil.setup({
+      keymaps = {
+        ["<C-h>"] = false,
+        ["<C-l>"] = false,
+        ["<C-s>"] = false,
+        ["<C-t>"] = {
+          callback = function()
+            oil.select({ tab = true, close = true })
+          end,
+          desc = "select_tab",
+          mode = "n",
+        },
+        ["<C-p>"] = {
+          callback = function()
+            oil.open_preview({ vertical = true, split = 'belowright' })
+          end,
+          desc = "open_preview",
+          mode = "n",
+        },
+      },
+      view_options = {
+        show_hidden = true
+      }
+    })
+    vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+  end
+})
