@@ -60,4 +60,11 @@ function prompt_end() {
   echo "%{$reset_color%}"$'\n'"$ "
 }
 
-alias scan_nas="nmap -sn 192.168.1.0/24"
+function yy() {
+    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+    yazi "$@" --cwd-file="$tmp"
+    if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+        builtin cd -- "$cwd"
+    fi
+    rm -f -- "$tmp"
+}
