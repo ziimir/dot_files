@@ -14,12 +14,10 @@ function configs() {
     config=$(echo "$config" | fzf)
 
     if [ "$config" = '.zshrc' ]; then
-        cd $HOME
         nvim "$HOME/.zshrc"
     else
         config="$HOME/.config/$config"
-        cd $config
-        nvim .
+        nvim $config
     fi
 }
 alias cf=configs
