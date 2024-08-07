@@ -16,8 +16,20 @@ use({
         vim.g.NERDTreeWinSize = 60
         vim.g.NERDTreeAutoDeleteBuffer = 1
 
-        vim.api.nvim_set_keymap('n', '<leader>t', ':NERDTreeToggle<CR>', {noremap = true})
-        vim.api.nvim_set_keymap('n', '<C-\\>', ':NERDTreeFind<CR>', {noremap = true})
+        --vim.api.nvim_set_keymap('n', '<leader>t', ':NERDTreeToggle<CR>', {noremap = true})
+        --vim.api.nvim_set_keymap('n', '<C-\\>', ':NERDTreeFind<CR>', {noremap = true})
+    end
+})
+
+use({
+    'mikavilpas/yazi.nvim',
+    requires = 'akinsho/bufferline.nvim',
+    config = function()
+        local yazi = require('yazi')
+        yazi.setup({})
+
+        vim.api.nvim_set_keymap('n', '<leader>t', ':Yazi cwd<CR>', {noremap = true})
+        vim.api.nvim_set_keymap('n', '<leader>-', ':Yazi<CR>', {noremap = true})
     end
 })
 

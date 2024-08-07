@@ -45,8 +45,16 @@ export GIT_PS1_SHOWUNTRACKEDFILES=1
 export PATH=$PATH:~/.local/bin
 
 # prompt config
-PROMPT='%{$fg[yellow]$fg[white]$bg[yellow]%}%n%{$bg[cyan]$fg[yellow]%}%{$bg[cyan]$fg[white]%}%c%{$reset_color%}$(check_git_repo)$(prompt_end)'
+#  - e0b6  - e0d6  - e0ba
+#  - e0bc  - e0a0 󰇥 - f01e5
+PROMPT='$(prompt_yazi)%{$fg[yellow]$fg[white]$bg[yellow]%}%n%{$bg[cyan]$fg[yellow]%}%{$bg[cyan]$fg[white]%}%c%{$reset_color%}$(check_git_repo)$(prompt_end)'
 RPROMPT=''
+
+function prompt_yazi() {
+  if [ -n "$YAZI_LEVEL" ]; then
+    echo "%{$fg[red]$bg[red]$fg[white]%} 󰇥 %{$reset_color$fg[red]$reset_color%} "
+  fi
+}
 
 function check_git_repo() {
   if [ -z $(git rev-parse --git-dir 2> /dev/null) ]; then
