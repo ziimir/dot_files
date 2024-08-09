@@ -1,7 +1,3 @@
-back() { BUFFER="cd .."; zle accept-line; }
-zle -N back
-bindkey "\eh" back
-
 autoload -z edit-command-line
 zle -N edit-command-line
 bindkey "\ei" edit-command-line

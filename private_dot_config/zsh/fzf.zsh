@@ -1,11 +1,3 @@
-# taken from https://github.com/stCarolas/dotfiles/blob/94279dd51d775dac50a7c38f861149de9b312c24/private_dot_config/zsh/fzf.zsh
-function projects() {
-    project=$(ls ~/Projects/ | fzf)
-    project="$HOME/Projects/$project"
-    cd $project
-}
-alias pr=projects
-
 function configs() {
     line_break=$'\n'
 
@@ -59,7 +51,7 @@ _run_npm_scripts() {
 }
 
 zle -N _run_npm_scripts
-bindkey '^ns' _run_npm_scripts
+bindkey '^dn' _run_npm_scripts
 
 # fzf makefile phony bindings
 _makefile_phony() {
@@ -74,4 +66,4 @@ _run_makefile_phony() {
 }
 
 zle -N _run_makefile_phony
-bindkey '^mf' _run_makefile_phony
+bindkey '^dm' _run_makefile_phony

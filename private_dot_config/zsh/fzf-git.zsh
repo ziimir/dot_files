@@ -1,8 +1,17 @@
+# Some parts taken from https://github.com/junegunn/fzf-git.sh
+
 _fzf_git_check() {
   git rev-parse HEAD > /dev/null 2>&1 && return
 
   [[ -n $TMUX ]] && tmux display-message "Not in a git repository"
   return 1
+}
+
+__fzf_git_join() {
+  local item
+  while read item; do
+    echo -n "${(q)item} "
+  done
 }
 
 _fzf_git_branches() {
@@ -13,9 +22,9 @@ _fzf_git_branches() {
   sed 's#^remotes/##'
 }
 _run_fzf_git_branches() {
-  local result=$(_fzf_git_branches);
+  local result=$(_fzf_git_branches | __fzf_git_join);
   zle reset-prompt;
-  LBUFFER+=$result; # taken from https://github.com/junegunn/fzf-git.sh/blob/7426d6a4df9a98c6f5b68352462601f4a7fc5611/fzf-git.sh#L255
+  LBUFFER+=$result;
 }
 
 zle -N _run_fzf_git_branches
@@ -29,7 +38,7 @@ _fzf_git_files() {
   cut -c4- | sed 's/.* -> //'
 }
 _run_fzf_git_files() {
-  local result=$(_fzf_git_files);
+  local result=$(_fzf_git_files | __fzf_git_join);
   zle reset-prompt;
   LBUFFER+=$result;
 }

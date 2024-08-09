@@ -1,8 +1,19 @@
-export ZSH="$HOME/.oh-my-zsh"
+# Completions
+autoload -U compinit; compinit
+# Allow to select in a menu
+zstyle ':completion:*' menu select
+# Case insensitive, partial words
+zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 
-# Example format: plugins=(rails git textmate ruby lighthouse)
+setopt MENU_COMPLETE        # Automatically highlight first element of completion menu
+setopt AUTO_LIST            # Automatically list choices on ambiguous completion.
+setopt COMPLETE_IN_WORD     # Complete from both ends of a word.
 
-source $ZSH/oh-my-zsh.sh
+# colors in completion
+[[ -z "$LS_COLORS" ]] || zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
+# use emacs key bindings
+bindkey -e
 
 # User configuration
 
@@ -14,7 +25,7 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 # node version manager
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash/zsh completion
 
 # fzf keybindings
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -34,6 +45,7 @@ export LANG=en_US.UTF-8
 # vim
 export MANPAGER="nvim +Man!" # man in vim
 export EDITOR="nvim"
+export VISUAL="nvim"
 alias vim="nvim"
 
 setopt PROMPT_SUBST
@@ -43,6 +55,9 @@ export GIT_PS1_SHOWUNTRACKEDFILES=1
 
 # PATH
 export PATH=$PATH:~/.local/bin
+
+# colors in prompt
+autoload -U colors && colors
 
 # prompt config
 #  - e0b6  - e0d6  - e0ba
@@ -76,3 +91,4 @@ function yy() {
     fi
     rm -f -- "$tmp"
 }
+alias yyp="yy $HOME/Projects"
