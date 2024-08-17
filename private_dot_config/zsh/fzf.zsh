@@ -2,11 +2,13 @@ function configs() {
     line_break=$'\n'
 
     config=$(ls ~/.config/)
-    config=$config$line_break$'.zshrc'
+    config=$config$line_break$'.zshrc'$line_break'.tmux.conf'
     config=$(echo "$config" | fzf)
 
     if [ "$config" = '.zshrc' ]; then
         nvim "$HOME/.zshrc"
+    elif [ "$config" = '.tmux.conf' ]; then
+        nvim "$HOME/.tmux.conf"
     else
         config="$HOME/.config/$config"
         nvim $config

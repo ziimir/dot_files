@@ -22,15 +22,36 @@ use({
 })
 
 use({
-    'mikavilpas/yazi.nvim',
-    requires = 'akinsho/bufferline.nvim',
-    config = function()
-        local yazi = require('yazi')
-        yazi.setup({})
+  'mikavilpas/yazi.nvim',
+  requires = 'akinsho/bufferline.nvim',
+  config = function()
+    local yazi = require('yazi')
+    yazi.setup({
+      open_file_function = function (chosen_file)
+        local function table_contains(tbl, x)
+          local found = false
+          for _, v in pairs(tbl) do
+            if v == x then
+              found = true
+            end
+          end
+          return found
+        end
 
-        vim.api.nvim_set_keymap('n', '<leader>t', ':Yazi cwd<CR>', {noremap = true})
-        vim.api.nvim_set_keymap('n', '<leader>-', ':Yazi<CR>', {noremap = true})
-    end
+        local img_exts = { 'png', 'jpg', 'jpeg', 'gif' }
+        local chosen_file_ext = vim.fn.fnamemodify(chosen_file, ':e');
+
+        if (table_contains(img_exts, chosen_file_ext)) then
+          vim.ui.open(chosen_file)
+        else
+          vim.cmd(string.format("edit %s", vim.fn.fnameescape(chosen_file)))
+        end
+      end
+    })
+
+    vim.api.nvim_set_keymap('n', '<leader>t', ':Yazi cwd<CR>', {noremap = true})
+    vim.api.nvim_set_keymap('n', '<leader>-', ':Yazi<CR>', {noremap = true})
+  end
 })
 
 use({
