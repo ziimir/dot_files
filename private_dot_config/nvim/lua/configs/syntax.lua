@@ -56,5 +56,6 @@ use({
     vim.g.neoformat_only_msg_on_error = 1
 
     cmd [[autocmd BufWritePre *.js,*.ts,*.jsx,*.tsx,*.json,*.css,*.html Neoformat]]
+    cmd [[autocmd BufWritePre *.rs Neoformat]]
   end
 })

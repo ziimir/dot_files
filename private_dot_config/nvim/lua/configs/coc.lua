@@ -13,6 +13,7 @@ use({
 -- coc-spell-checker, coc-cspell-dicts
 -- coc-cssmodules, coc-stylelint
 -- coc-clangd
+-- coc-rust-analyzer
 use({
   'neoclide/coc.nvim',
   branch = 'release',
@@ -42,6 +43,7 @@ use({
     keyset("n", "<space>T", ":call CocAction('jumpTypeDefinition', 'tab drop')", {silent = true})
     keyset("n", "<space>i", "<Plug>(coc-implementation)", {silent = true})
     keyset("n", "<space>*", "<Plug>(coc-references)", {silent = true})
+    keyset("n", "<space>l", "<Plug>(coc-diagnostic-info)", {silent = true})
 
     keyset("n", "<space>r", "<Plug>(coc-rename)", {silent = true})
     keyset("n", "<space>R", "<Plug>(coc-refactor)", {silent = true})

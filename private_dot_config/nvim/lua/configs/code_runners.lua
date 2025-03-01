@@ -21,7 +21,7 @@ local haskellCodeHelpersGroup = vim.api.nvim_create_augroup('HaskellCodeHelpersG
 vim.api.nvim_create_autocmd('FileType', {
     pattern = {'haskell'},
     callback = function()
-        vim.keymap.set('n', '<F8>', ':HaskellExe<CR>', {silent = true})
+        vim.keymap.set('n', '<F5>', ':HaskellExe<CR>', {silent = true})
         vim.keymap.set('n', '<F9>', ':HaskellREPL<CR>', {silent = true})
     end,
     group = haskellCodeHelpersGroup
@@ -50,7 +50,7 @@ local nodeCodeHelpersGroup = vim.api.nvim_create_augroup("NodeCodeHelpersGroup",
 vim.api.nvim_create_autocmd("FileType", {
     pattern = {'javascript'},
     callback = function()
-        vim.keymap.set('n', '<F8>', ':NodeExe<CR>', {silent = true})
+        vim.keymap.set('n', '<F5>', ':NodeExe<CR>', {silent = true})
         vim.keymap.set('n', '<F9>', ':NodeREPL<CR>', {silent = true})
     end,
     group = nodeCodeHelpersGroup
@@ -66,7 +66,7 @@ vim.api.nvim_create_user_command(
     {nargs = 0}
 )
 
--- execute
+-- compile + execute
 vim.api.nvim_create_user_command(
     'ClangExe',
     function()
@@ -80,7 +80,26 @@ vim.api.nvim_create_autocmd("FileType", {
     pattern = {'c'},
     callback = function()
         vim.keymap.set('n', '<F7>', ':ClangCmp<CR>', {silent = true})
-        vim.keymap.set('n', '<F8>', ':ClangExe<CR>', {silent = true})
+        vim.keymap.set('n', '<F5>', ':ClangExe<CR>', {silent = true})
     end,
     group = clangCodeHelpersGroup
+})
+
+-- RUST
+-- compile + execute
+vim.api.nvim_create_user_command(
+    'CargoRun',
+    function()
+        cmd [[:AsyncRun -mode=term -pos=floaterm -cwd=$(VIM_CWD) cargo run]]
+    end,
+    {nargs = 0}
+)
+
+local rustCodeHelpersGroup = vim.api.nvim_create_augroup("RustCodeHelpersGroup", { clear = true })
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = {'rust'},
+    callback = function()
+        vim.keymap.set('n', '<F5>', ':CargoRun<CR>', {silent = true})
+    end,
+    group = rustCodeHelpersGroup
 })
