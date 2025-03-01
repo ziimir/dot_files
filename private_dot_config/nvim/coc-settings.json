@@ -8,5 +8,6 @@
   "cSpell.userWords": ["Cacher", "fantlab", "reduxjs"],
   "workspace.ignoredFolders": ["$HOME", "$HOME/.cargo/**", "$HOME/.rustup/**"],
   "rust-analyzer.inlayHints.typeHints.enable": false,
+  "rust-analyzer.inlayHints.parameterHints.enable": false,
   "rust-analyzer.typing.autoClosingAngleBrackets.enable": true
 }
