@@ -2,7 +2,7 @@ require('common_fn')
 
 use({
     'junegunn/fzf.vim',
-    requires = '/opt/homebrew/opt/fzf',
+    requires = 'junegunn/fzf',
     config = function()
         vim.g.fzf_preview_window = {'up:50%', 'ctrl-t'}
         vim.g.fzf_layout = {down = '100%'}

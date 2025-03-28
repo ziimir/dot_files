@@ -1,6 +1,6 @@
 require('common_fn')
 
--- mason for installing prettier
+-- mason for installing prettier and djlint (for jinja)
 use({
   'williamboman/mason.nvim',
   config = function()

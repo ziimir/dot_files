@@ -20,7 +20,8 @@ use({
               'markdown',
               'markdown_inline',
               'c',
-              'cpp'
+              'cpp',
+              'rust'
             },
             highlight = {
                 enable = true
@@ -55,7 +56,12 @@ use({
     vim.g.neoformat_try_node_exe = 1
     vim.g.neoformat_only_msg_on_error = 1
 
-    cmd [[autocmd BufWritePre *.js,*.ts,*.jsx,*.tsx,*.json,*.css,*.html Neoformat]]
+    cmd [[autocmd BufWritePre *.js,*.ts,*.jsx,*.tsx,*.json,*.css Neoformat]]
     cmd [[autocmd BufWritePre *.rs Neoformat]]
+
+    --vim.g:neoformat_python_autopep8 = {
+      --exe = "djlint",
+      --args = { "--reformat", '-' },
+    --}
   end
 })

@@ -3,11 +3,30 @@ require('common_fn')
 use('tpope/vim-sensible')
 use('kana/vim-textobj-user')
 use('kana/vim-textobj-line')
-use('svermeulen/vim-easyclip')
 use('djoshea/vim-autoread')
 use('tpope/vim-repeat')
 use('machakann/vim-sandwich')
 use('https://github.com/jiangmiao/auto-pairs.git')
+
+--use('svermeulen/vim-easyclip')
+use({
+  'svermeulen/vim-cutlass',
+  config = function()
+    cmd [[
+      nnoremap m d
+      xnoremap m d
+
+      nnoremap mm dd
+      nnoremap M D
+
+      nnoremap x d
+      xnoremap x d
+
+      nnoremap xx dd
+      nnoremap X D
+    ]]
+  end
+})
 
 use({
   'simeji/winresizer',

@@ -5,9 +5,20 @@
   "coc.preferences.useQuickfixForLocations": true,
   "cSpellExt.enableDictionaries": ["russian"],
   "cSpell.language": "en,ru",
-  "cSpell.userWords": ["Cacher", "fantlab", "reduxjs"],
+  "cSpell.userWords": [
+    "Cacher",
+    "anki",
+    "askama",
+    "fantlab",
+    "leptos",
+    "minijinja",
+    "reduxjs",
+    "reqwest",
+    "rsplit",
+    "thiserror"
+  ],
   "workspace.ignoredFolders": ["$HOME", "$HOME/.cargo/**", "$HOME/.rustup/**"],
-  "rust-analyzer.inlayHints.typeHints.enable": false,
-  "rust-analyzer.inlayHints.parameterHints.enable": false,
+  "rust-analyzer.inlayHints.typeHints.enable": true,
+  "rust-analyzer.inlayHints.parameterHints.enable": true,
   "rust-analyzer.typing.autoClosingAngleBrackets.enable": true
 }
