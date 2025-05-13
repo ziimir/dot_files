@@ -8,7 +8,7 @@ return {
     "easymotion/vim-easymotion",
     {
         "lewis6991/whatthejump.nvim",
-        enable = false,
+        enabled = false,
     },
     {
         "preservim/nerdtree",

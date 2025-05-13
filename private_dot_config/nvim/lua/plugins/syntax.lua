@@ -24,7 +24,8 @@ return {
                 highlight = { enable = true },
                 indent = { enable = true },
                 incremental_selection = { enable = false },
-                autotag = { enable = true }
+                autotag = { enable = true },
+                matchup = { enable = false },
             })
         end
     },

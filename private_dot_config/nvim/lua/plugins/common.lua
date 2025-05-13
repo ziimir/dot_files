@@ -6,11 +6,17 @@ return {
     "machakann/vim-sandwich",
     "svermeulen/vim-easyclip",
     {
-        url = "https://github.com/jiangmiao/auto-pairs.git",
-    },
-    {
         "kana/vim-textobj-line",
         dependencies = "kana/vim-textobj-user",
+    },
+    {
+        url = "https://github.com/jiangmiao/auto-pairs.git", -- or cohama/lexima.vim
+        enabled = flase,
+    },
+    {
+        "windwp/nvim-autopairs",
+        event = "InsertEnter",
+        config = true
     },
     {
         "simeji/winresizer",
@@ -43,5 +49,12 @@ return {
         init = function()
             vim.g.asyncrun_open = 19
         end
-    }
+    },
+    {
+        "andymass/vim-matchup",
+        init = function()
+            vim.g.matchup_matchparen_offscreen = {}
+            vim.g.matchup_matchparen_deferred = 1
+        end
+    },
 }
