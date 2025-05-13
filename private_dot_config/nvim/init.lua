@@ -1,26 +1,21 @@
-require('common_options')
+require("common_options")
+require("common_fn")
 
-require('plugins')
+require("bootstrap_lazy")
 
-require('configs/common')
-require('configs/colors')
-require('configs/navigation')
-require('configs/airline')
-require('configs/quickfix')
-require('configs/float_term')
+require("lazy").setup({
+    defaults = {
+        lazy = false
+    },
+    rocks = {
+        enabled = false
+    },
+    spec = {
+        -- import your plugins
+        { import = "plugins" }
+    },
+    -- automatically check for plugin updates
+    checker = { enabled = false }
+})
 
-require('configs/syntax')
-require('configs/ack')
-require('configs/fzf')
-require('configs/git')
-
-require('configs/code_helpers')
-require('configs/code_testing')
-require('configs/code_runners')
-require('configs/html_client')
---require('configs/lsp')
-require('configs/coc')
-require('configs/fold')
-
-require('configs/snippets')
-require('snippets/frontend')
+require("snippets/frontend")

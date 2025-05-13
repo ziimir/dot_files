@@ -11,6 +11,7 @@
     "askama",
     "fantlab",
     "leptos",
+    "libretranslate",
     "minijinja",
     "reduxjs",
     "reqwest",
