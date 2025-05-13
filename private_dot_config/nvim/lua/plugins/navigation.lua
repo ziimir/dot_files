@@ -7,6 +7,10 @@ vim.api.nvim_set_keymap("", "<C-j>", ":tabm -1<CR>", {})
 return {
     "easymotion/vim-easymotion",
     {
+        "lewis6991/whatthejump.nvim",
+        enable = false,
+    },
+    {
         "preservim/nerdtree",
         init = function()
             vim.g.NERDTreeQuitOnOpen = 1

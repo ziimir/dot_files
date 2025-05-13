@@ -8,6 +8,17 @@ return {
     "AaronLasseigne/yank-code",
     "AndrewRadev/linediff.vim",
     {
+        "rareitems/hl_match_area.nvim",
+        opts = { highlight_in_insert_mode = true },
+        init = function()
+            vim.api.nvim_set_hl(0, 'MatchArea', {bg = "#FFFFFF"})
+        end,
+    },
+    {
+        "m-demare/hlargs.nvim",
+        opts = { color = "#9ACCCC" }
+    },
+    {
         "norcalli/nvim-colorizer.lua",
         opts = {
             css = { css_fn = true }
