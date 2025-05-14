@@ -3,40 +3,30 @@ function configs() {
 
     config=$(ls ~/.config/)
     config=$config$line_break$'.zshrc'$line_break'.tmux.conf'
-    config=$(echo "$config" | fzf)
+    result=$(echo "$config" | fzf)
 
-    if [ "$config" = '.zshrc' ]; then
+    if [ -z "$result" ]; then
+        return 0
+    fi
+
+    if [ "$result" = '.zshrc' ]; then
+        cd $HOME
         nvim "$HOME/.zshrc"
-    elif [ "$config" = '.tmux.conf' ]; then
+    elif [ "$result" = '.tmux.conf' ]; then
+        cd $HOME
         nvim "$HOME/.tmux.conf"
     else
-        config="$HOME/.config/$config"
-        nvim $config
+        result="$HOME/.config/$result"
+        if [ -d "$result" ];
+        then
+            cd $result
+        else
+            cd $HOME
+        fi
+        nvim $result
     fi
 }
 alias cf=configs
-
-fzf_open() {
-    target=$(ls -d * | fzf)
-    if [ -z "$target" ];
-    then
-        echo "selection is empty"
-    else
-        if [ -d "$target" ];
-        then
-            cd $target
-        else
-            nvim $target
-        fi
-    fi
-}
-
-fzf_open_zle() {
-    BUFFER="fzf_open";
-    zle accept-line;
-}
-zle -N fzf_open_zle
-bindkey "\ej" fzf_open_zle
 
 # fzf npm scripts bindings
 _npm_scripts() {
