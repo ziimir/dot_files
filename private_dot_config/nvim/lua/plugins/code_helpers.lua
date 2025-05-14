@@ -9,7 +9,7 @@ return {
     "AndrewRadev/linediff.vim",
     {
         "rareitems/hl_match_area.nvim",
-        opts = { highlight_in_insert_mode = true },
+        opts = { matchpairs  = { "(:)", "{:}", "[:]", "<:>" } },
         init = function()
             vim.api.nvim_set_hl(0, 'MatchArea', {bg = "#FFFFFF"})
         end,

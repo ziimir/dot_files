@@ -5,7 +5,56 @@ vim.api.nvim_set_keymap("", "<C-k>", ":tabm +1<CR>", {})
 vim.api.nvim_set_keymap("", "<C-j>", ":tabm -1<CR>", {})
 
 return {
-    "easymotion/vim-easymotion",
+    {
+        "smoka7/hop.nvim", -- instead of easymotion/vim-easymotion
+        config = true,
+        init = function ()
+            local hop = require('hop')
+            local directions = require('hop.hint').HintDirection
+            local position = require('hop.hint').HintPosition
+
+            vim.keymap.set("", "f", function()
+                hop.hint_char1({ direction = directions.AFTER_CURSOR, current_line_only = true })
+            end, { remap = true })
+            vim.keymap.set("", "F", function()
+                hop.hint_char1({ direction = directions.BEFORE_CURSOR, current_line_only = true })
+            end, { remap = true })
+
+            vim.keymap.set("", "t", function()
+                hop.hint_char1({ direction = directions.AFTER_CURSOR, current_line_only = true, hint_offset = -1 })
+            end, {remap = true})
+            vim.keymap.set("", "T", function()
+                hop.hint_char1({ direction = directions.BEFORE_CURSOR, current_line_only = true, hint_offset = 1 })
+            end, {remap = true})
+
+            vim.keymap.set("", "<leader><leader>j", function()
+                hop.hint_lines({ direction = directions.AFTER_CURSOR })
+            end, { remap = true })
+            vim.keymap.set("", "<leader><leader>k", function()
+                hop.hint_lines({ direction = directions.BEFORE_CURSOR })
+            end, { remap = true })
+
+            vim.keymap.set("", "<leader><leader>w", function()
+                hop.hint_words({ direction = directions.AFTER_CURSOR })
+            end, { remap = true })
+            vim.keymap.set("", "<leader><leader>b", function()
+                hop.hint_words({ direction = directions.BEFORE_CURSOR })
+            end, { remap = true })
+
+            vim.keymap.set("", "<leader><leader>e", function()
+                hop.hint_words({
+                    direction = directions.AFTER_CURSOR,
+                    hint_position = position.END,
+                })
+            end, { remap = true })
+            vim.keymap.set("", "<leader><leader>ge", function()
+                hop.hint_words({
+                    direction = directions.BEFORE_CURSOR,
+                    hint_position = position.END,
+                })
+            end, { remap = true })
+        end
+    },
     {
         "lewis6991/whatthejump.nvim",
         enabled = false,

@@ -10,11 +10,7 @@ return {
         dependencies = "kana/vim-textobj-user",
     },
     {
-        url = "https://github.com/jiangmiao/auto-pairs.git", -- or cohama/lexima.vim
-        enabled = flase,
-    },
-    {
-        "windwp/nvim-autopairs",
+        "windwp/nvim-autopairs", -- instead of jiangmiao/auto-pairs.git or cohama/lexima.vim
         event = "InsertEnter",
         config = true
     },
@@ -22,13 +18,6 @@ return {
         "simeji/winresizer",
         init = function()
             vim.g.winresizer_start_key = '<leader>e'
-        end
-    },
-    {
-        "rhysd/clever-f.vim",
-        init = function()
-            vim.g.clever_f_across_no_line = 1
-            vim.g.clever_f_smart_case = 1
         end
     },
     {
@@ -53,7 +42,7 @@ return {
     {
         "andymass/vim-matchup",
         init = function()
-            vim.g.matchup_matchparen_offscreen = {}
+            vim.g.matchup_matchparen_offscreen = { method = "popup" }
             vim.g.matchup_matchparen_deferred = 1
         end
     },
