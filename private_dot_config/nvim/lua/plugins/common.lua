@@ -6,6 +6,12 @@ return {
     "machakann/vim-sandwich",
     "svermeulen/vim-easyclip",
     {
+        "LunarVim/bigfile.nvim",
+        opts = {
+            filesize = 100,
+        },
+    },
+    {
         "kana/vim-textobj-line",
         dependencies = "kana/vim-textobj-user",
     },
@@ -45,5 +51,14 @@ return {
             vim.g.matchup_matchparen_offscreen = { method = "popup" }
             vim.g.matchup_matchparen_deferred = 1
         end
+    },
+    {
+        "haya14busa/vim-asterisk",
+        keys = {
+            { "*", "<Plug>(asterisk-z*)", mode = "n" },
+            { "#", "<Plug>(asterisk-z#)", mode = "n" },
+            { "g*", "<Plug>(asterisk-gz*)", mode = "n" },
+            { "g#", "<Plug>(asterisk-gz#)", mode = "n" },
+        }
     },
 }

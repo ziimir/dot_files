@@ -94,4 +94,5 @@ function yy() {
     fi
     rm -f -- "$tmp"
 }
-alias yyp="yy $HOME/Projects"
+
+alias pr="cd $HOME/Projects"
