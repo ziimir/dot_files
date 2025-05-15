@@ -56,10 +56,6 @@ return {
         end
     },
     {
-        "lewis6991/whatthejump.nvim",
-        enabled = false,
-    },
-    {
         "preservim/nerdtree",
         init = function()
             vim.g.NERDTreeQuitOnOpen = 1
