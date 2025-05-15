@@ -52,7 +52,6 @@
   "vim-test": { "branch": "master", "commit": "b0c3e13249699a522c8b472ff79eff40d2935476" },
   "vim-textobj-line": { "branch": "master", "commit": "1a6780d29adcf7e464e8ddbcd0be0a9df1a37339" },
   "vim-textobj-user": { "branch": "master", "commit": "41a675ddbeefd6a93664a4dc52f302fe3086a933" },
-  "whatthejump.nvim": { "branch": "main", "commit": "d05b93eca173d374d603e2b8709f18ae6dd4b7af" },
   "winresizer": { "branch": "master", "commit": "9bd559a03ccec98a458e60c705547119eb5350f3" },
   "yank-code": { "branch": "master", "commit": "24d8890ff4c2c6002fcc153e4b28fffce0a66188" },
   "yazi.nvim": { "branch": "main", "commit": "75766fab481fd8b7877c460dd3ed02e78adc2c24" },
