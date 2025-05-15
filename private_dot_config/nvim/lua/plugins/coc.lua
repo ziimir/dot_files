@@ -1,6 +1,6 @@
 return {
     {
-        -- mason for installing prettier
+        -- mason for installing prettier, djlint
         "williamboman/mason.nvim",
         config = true,
     },
