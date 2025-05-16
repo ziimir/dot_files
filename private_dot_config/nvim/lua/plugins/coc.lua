@@ -81,5 +81,20 @@ return {
             -- Resume latest coc list
             keyset("n", "<leader><space>p", ":<C-u>CocListResume<cr>", opts)
         end
-    }
+    },
+    {
+        "hedyhli/outline.nvim",
+        opts = {
+            symbol_folding = {
+                autofold_depth = false,
+            },
+        },
+        init = function()
+            vim.keymap.set(
+                "n",
+                "<leader>o", "<cmd>OutlineOpen<CR>",
+                { desc = "Open Outline" }
+            )
+        end
+    },
 }
