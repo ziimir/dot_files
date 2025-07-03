@@ -62,7 +62,7 @@ return {
             )
 
             vim.api.nvim_create_user_command(
-                "Jest",
+                "Jes",
                 function(opts)
                     require("root-climber").fzf_run(
                         "*.jest.config.js",
@@ -75,7 +75,7 @@ return {
             )
 
             vim.api.nvim_create_user_command(
-                "JestDebug",
+                "Jed",
                 function(opts)
                     vim.g["test#javascript#jest#executable"] = "node --inspect-brk node_modules/.bin/jest"
 

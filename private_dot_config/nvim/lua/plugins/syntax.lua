@@ -4,6 +4,11 @@ return {
     "nvim-treesitter/nvim-treesitter-textobjects",
     "windwp/nvim-ts-autotag",
     {
+        "OXY2DEV/markview.nvim",
+        lazy = false,
+        priority = 49,
+    },
+    {
         "nvim-treesitter/nvim-treesitter",
         build = ":TSUpdate",
         config = function()

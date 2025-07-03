@@ -5,6 +5,7 @@ return {
     "tpope/vim-repeat",
     "machakann/vim-sandwich",
     "svermeulen/vim-easyclip",
+    "j-hui/fidget.nvim",
     {
         "LunarVim/bigfile.nvim",
         opts = {
@@ -60,5 +61,35 @@ return {
             { "g*", "<Plug>(asterisk-gz*)", mode = "n" },
             { "g#", "<Plug>(asterisk-gz#)", mode = "n" },
         }
+    },
+    {
+        "goolord/alpha-nvim",
+        config = function ()
+            local dashboard = require("alpha.themes.dashboard")
+
+            local date = os.date("📅 %Y-%m-%d")
+            local time = os.date("⏰ %H:%M:%S")
+
+            local version = vim.version()
+            local nvim_version = string.format("🧪 Neovim v%d.%d.%d", version.major, version.minor, version.patch)
+
+            local lines = {}
+            for line in io.lines(os.getenv("HOME") .. "/.vim_dashboard") do
+                table.insert(lines, line)
+            end
+
+            dashboard.section.header.val = {
+                date,
+                time,
+                nvim_version,
+            }
+            dashboard.section.buttons.val = {
+                dashboard.button("e", "  New file", "<cmd>ene<CR>"),
+            }
+            dashboard.section.footer.val = lines
+            dashboard.opts.opts.noautocmd = true
+
+            require("alpha").setup(dashboard.opts)
+        end
     },
 }
