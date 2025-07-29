@@ -33,13 +33,5 @@ return {
                 vim.fn.feedkeys(":" .. cmd, "n")
             end
         )
-        vim.keymap.set(
-             "n",
-             "<Leader>ag",
-             function()
-                 local cmd = "Ack! " .. "-G .*\\.tsx"
-                 vim.fn.feedkeys(":" .. cmd, "n")
-             end
-        )
     end
 }

@@ -3,6 +3,10 @@ P = function(v)
     return v
 end
 
+PB = function(v)
+    vim.api.nvim_put({vim.inspect(v)}, "", false, false)
+end
+
 -- https://stackoverflow.com/questions/76491151/delaying-lua-function-so-it-runs-after-neovim-has-successfully-launched
 local function start_up_func()
     print("My start-up function here")

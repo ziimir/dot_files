@@ -7,15 +7,22 @@ return {
         },
         opts = {
             strategies = {
-                chat = { adapter = "deepseek" },
-                inline = { adapter = "deepseek" },
-                cmd = { adapter = "deepseek" },
+                chat = {
+                    adapter = "openai",
+                    send = {
+                        modes = {
+                            n = { "<C-s>" },
+                        },
+                    },
+                },
+                inline = { adapter = "openai" },
+                cmd = { adapter = "openai" },
             },
             adapters = {
                 openai = function()
-                    return require("codecompanion.adapters").extend("deepseek", {
+                    return require("codecompanion.adapters").extend("openai", {
                         env = {
-                            api_key = "cmd:cat ~/.deepseek_key | tr -d '\n'",
+                            api_key = "cmd:cat ~/.gpt_key | tr -d '\n'",
                         },
                     })
                 end

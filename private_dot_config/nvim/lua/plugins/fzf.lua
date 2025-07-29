@@ -26,5 +26,25 @@ return {
             end,
             { noremap = true }
         )
+        vim.keymap.set(
+            'n',
+            '<Leader>ag',
+            function()
+                return vim.fn['fzf#run'](
+                    {
+                        source = {
+                            "-G .*\\.tsx",
+                            "-G .*\\.test\\.tsx",
+                            "-G .*\\.story\\.tsx",
+                        },
+                        sink = function(line)
+                            local cmd = "Ack! " .. line
+                            vim.fn.feedkeys(":" .. cmd .. " ", "n")
+                        end
+                    }
+                )
+            end,
+            { noremap = true }
+        )
     end
 }
