@@ -56,6 +56,15 @@ vim.api.nvim_create_user_command(
     { nargs = 0 }
 )
 
+-- gx - open path under cursor with external app
+vim.api.nvim_create_user_command(
+    "OpenThis",
+    function()
+        vim.cmd [[Open %]]
+    end,
+    { nargs = 0 }
+)
+
 vim.keymap.set(
     "n",
     "<Leader>r",

@@ -22,6 +22,7 @@ return {
                     "lua",
                     "markdown",
                     "markdown_inline",
+                    "yaml",
                     "c",
                     "cpp",
                     "rust",
