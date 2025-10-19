@@ -7,6 +7,26 @@ return {
         "OXY2DEV/markview.nvim",
         lazy = false,
         priority = 49,
+        config = function()
+            local presets = require("markview.presets");
+            require("markview").setup({
+                markdown = {
+                    headings = presets.headings.glow,
+                    tables = presets.single,
+                }
+            });
+
+            vim.api.nvim_create_autocmd({ "InsertEnter", "InsertLeave" }, {
+                pattern = "*.md",
+                callback = function(ev)
+                    if ev.event == "InsertEnter" then
+                        vim.cmd("Markview disable")
+                    else
+                        vim.cmd("Markview enable")
+                    end
+                end,
+            })
+        end
     },
     {
         "nvim-treesitter/nvim-treesitter",
@@ -66,12 +86,17 @@ return {
                 html = { "djlint" },
                 htmldjango = { "djlint" },
 
+                css = { "prettier" },
+                scss = { "prettier" },
+
                 rust = { "rustfmt" },
+
+                --markdown = { "prettier" },
             },
             format_on_save = {
                 lsp_format = "fallback",
                 timeout_ms = 10000,
             }
         },
-    }
+    },
 }

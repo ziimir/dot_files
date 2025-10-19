@@ -1,10 +1,5 @@
 return {
     {
-        -- mason for installing prettier, djlint
-        "williamboman/mason.nvim",
-        config = true,
-    },
-    {
         -- install after
         -- coc-tsserver, coc-eslint
         -- coc-spell-checker, coc-cspell-dicts
@@ -12,6 +7,7 @@ return {
         -- coc-clangd
         -- coc-rust-analyzer
         "neoclide/coc.nvim",
+        enabled = false,
         branch = "release",
         init = function()
             -- Always show the signcolumn, otherwise it would shift the text each time diagnostics appeared/became resolved
@@ -62,39 +58,6 @@ return {
             keyset("i", "<C-y>", 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(0)<cr>" : "<Left>"', opts)
             keyset("v", "<C-e>", 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-e>"', opts)
             keyset("v", "<C-y>", 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-y>"', opts)
-
-            -- Add `:Format` command to format current buffer
-            vim.api.nvim_create_user_command("Format", "call CocAction('format')", {})
-
-            -- Mappings for CoCList
-            -- code actions and coc stuff
-            ---@diagnostic disable-next-line: redefined-local
-            local opts = { silent = true, nowait = true }
-            -- Manage extensions
-            keyset("n", "<leader><space>e", ":<C-u>CocList extensions<cr>", opts)
-            -- Show commands
-            keyset("n", "<leader><space>c", ":<C-u>CocList commands<cr>", opts)
-            -- Find symbol of current document
-            keyset("n", "<leader><space>o", ":<C-u>CocList outline<cr>", opts)
-            -- Search workspace symbols
-            keyset("n", "<leader><space>s", ":<C-u>CocList -I symbols<cr>", opts)
-            -- Resume latest coc list
-            keyset("n", "<leader><space>p", ":<C-u>CocListResume<cr>", opts)
-        end
-    },
-    {
-        "hedyhli/outline.nvim",
-        opts = {
-            symbol_folding = {
-                autofold_depth = false,
-            },
-        },
-        init = function()
-            vim.keymap.set(
-                "n",
-                "<leader>o", "<cmd>OutlineOpen<CR>",
-                { desc = "Open Outline" }
-            )
         end
     },
 }

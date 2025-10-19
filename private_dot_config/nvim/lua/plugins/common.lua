@@ -84,7 +84,8 @@ return {
                 nvim_version,
             }
             dashboard.section.buttons.val = {
-                dashboard.button("e", "  New file", "<cmd>ene<CR>"),
+                dashboard.button("t", "Browse", "<cmd>Yazi cwd<CR>"),
+                dashboard.button("e", "New file", "<cmd>ene<CR>"),
             }
             dashboard.section.footer.val = lines
             dashboard.opts.opts.noautocmd = true
