@@ -1,0 +1,14 @@
+[core]
+    excludesfile = ~/.gitignore_global
+    editor = nvim
+    quotepath = false
+[user]
+    name = ziimir
+[push]
+    default = simple
+[alias]
+    br = branch
+    co = checkout
+    fe = fetch -p
+    draw = log --graph --oneline --decorate --all --pretty='format:%cd %C(auto) %h%d %s' --date=format:'%d-%m-%Y %H:%M:%S'
+    upd = !sh -c 'git stash && git fetch -p $0 && git pull $0 $1 && git stash pop'
