@@ -30,7 +30,7 @@ return {
     {
         "editorconfig/editorconfig-vim",
         init = function()
-            vim.g.EditorConfig_exclude_patterns = {"fugitive://.*", "scp://.*"}
+            vim.g.EditorConfig_exclude_patterns = { "fugitive://.*", "scp://.*" }
         end
     },
     {
@@ -56,15 +56,15 @@ return {
     {
         "haya14busa/vim-asterisk",
         keys = {
-            { "*", "<Plug>(asterisk-z*)", mode = "n" },
-            { "#", "<Plug>(asterisk-z#)", mode = "n" },
+            { "*",  "<Plug>(asterisk-z*)",  mode = "n" },
+            { "#",  "<Plug>(asterisk-z#)",  mode = "n" },
             { "g*", "<Plug>(asterisk-gz*)", mode = "n" },
             { "g#", "<Plug>(asterisk-gz#)", mode = "n" },
         }
     },
     {
         "goolord/alpha-nvim",
-        config = function ()
+        config = function()
             local dashboard = require("alpha.themes.dashboard")
 
             local date = os.date("📅 %Y-%m-%d")
@@ -93,4 +93,19 @@ return {
             require("alpha").setup(dashboard.opts)
         end
     },
+    {
+        "folke/zen-mode.nvim",
+        opts = {
+            window = {
+                width = 90,
+                options = {
+                    signcolumn = "no",
+                    number = false,
+                },
+            },
+        },
+        keys = {
+            { "<leader>pz", "<cmd>ZenMode<CR>", desc = "Toggle Zen Mode" },
+        },
+    }
 }

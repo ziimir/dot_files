@@ -26,6 +26,18 @@ return {
                     end
                 end,
             })
+
+            vim.api.nvim_create_autocmd("FileType", {
+                pattern = "markdown",
+                callback = function()
+                    vim.keymap.set(
+                        "n",
+                        "<leader>pp",
+                        "<cmd>Markview toggle<CR>",
+                        { buffer = true, desc = "Toggle Markview preview" }
+                    )
+                end,
+            })
         end
     },
     {
