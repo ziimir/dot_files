@@ -10,22 +10,16 @@ return {
         config = function()
             local presets = require("markview.presets");
             require("markview").setup({
+                preview = {
+                    enable = false,
+                },
                 markdown = {
                     headings = presets.headings.glow,
                     tables = presets.single,
-                }
+                },
+                html = { enable = false },
+                yaml = { enable = false },
             });
-
-            vim.api.nvim_create_autocmd({ "InsertEnter", "InsertLeave" }, {
-                pattern = "*.md",
-                callback = function(ev)
-                    if ev.event == "InsertEnter" then
-                        vim.cmd("Markview disable")
-                    else
-                        vim.cmd("Markview enable")
-                    end
-                end,
-            })
 
             vim.api.nvim_create_autocmd("FileType", {
                 pattern = "markdown",
@@ -33,12 +27,24 @@ return {
                     vim.keymap.set(
                         "n",
                         "<leader>pp",
-                        "<cmd>Markview toggle<CR>",
+                        "<cmd>Markview splitToggle<CR>",
+                        { buffer = true, desc = "Toggle Markview preview" }
+                    )
+
+                    vim.keymap.set(
+                        "n",
+                        "<leader>pP",
+                        "<cmd>Markview Toggle<CR>",
                         { buffer = true, desc = "Toggle Markview preview" }
                     )
                 end,
             })
         end
+    },
+    {
+        'SCJangra/table-nvim',
+        ft = 'markdown',
+        opts = {},
     },
     {
         "nvim-treesitter/nvim-treesitter",

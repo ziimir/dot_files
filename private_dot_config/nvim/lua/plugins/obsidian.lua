@@ -33,7 +33,14 @@ return {
 
                 map("n", "<space>h", vim.lsp.buf.hover, "Obs: Hover")
                 map("n", "<space>d", "<CMD>Obsidian follow_link<CR>", "Obs: Follow link")
-                map("n", "<space>D", "<CMD>Obsidian follow_link vsplit<CR>", "Obs: Follow link")
+                map("n", "<space>D", function()
+                    vim.cmd("Obsidian follow_link vsplit")
+                    -- дождаться, пока плагин реально откроет сплит и переключится
+                    vim.schedule(function()
+                        -- перенос текущего окна в новый таб
+                        vim.cmd("wincmd T")
+                    end)
+                end, "Obs: open link in new tab")
             end,
         })
         vim.api.nvim_create_autocmd("User", {

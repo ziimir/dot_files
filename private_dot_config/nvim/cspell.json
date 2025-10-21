@@ -1,2 +1,6 @@
-{ "words": ["quickfix", "fantlab"] }
-
+{
+  "version": "0.2",
+  "language": "en,ru",
+  "import": ["~/.local/share/nvim/mason/packages/cspell-lsp/node_modules/@cspell/dict-ru_ru/cspell-ext.json"],
+  "words": ["quickfix", "fantlab"]
+}

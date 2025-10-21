@@ -18,7 +18,7 @@ return {
                 "rust_analyzer",
                 "clangd",
                 "cssls", "stylelint_lsp",
-                "cspell_ls",
+                "cspell_ls", -- `npm install -D @cspell/dict-ru_ru` в ~/.local/share/nvim/mason/packages/cspell-lsp
             },
         },
         init = function()
@@ -147,7 +147,7 @@ return {
             },
             appearance = { nerd_font_variant = "mono" },
             completion = {
-                documentation = { auto_show = false },
+                documentation = { auto_show = true },
                 list = {
                     selection = {
                         preselect = false,
