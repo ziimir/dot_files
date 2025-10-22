@@ -23,8 +23,8 @@ return {
         end
     },
     {
-        dir = vim.fn.stdpath("config") .. "/lua/foldctx",
-        name = "foldctx",
+        "ziimir/foldctx",
+        dev = true,
         lazy = false,
         config = function()
             require("foldctx").setup({

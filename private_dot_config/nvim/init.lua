@@ -14,6 +14,11 @@ require("lazy").setup({
         -- import your plugins
         { import = "plugins" }
     },
+    dev = {
+        path = vim.fn.stdpath("config") .. "/lua/local",
+        patterns = { "ziimir" },
+        fallback = true,
+    },
     -- automatically check for plugin updates
     checker = { enabled = false }
 })

@@ -1,6 +1,10 @@
+if vim.g.loaded_foldctx_plugin then return end
+vim.g.loaded_foldctx_plugin = true
+
 local M = {}
 
-local core = require("foldctx.vtext")
+-- всю «логику» держим в lua/foldctx/init.lua
+local core = require("foldctx")
 
 local defaults = {
     folds = "all", -- "all" | "headings"

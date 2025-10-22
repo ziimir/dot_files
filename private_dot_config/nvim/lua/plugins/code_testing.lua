@@ -1,7 +1,7 @@
 return {
-    --"~/Project/root-climber.nvim",
     {
         "ziimir/root-climber.nvim",
+        dev = true,
         init = function()
             vim.g["root_climber#always_confirm"] = 0
 
@@ -53,7 +53,7 @@ return {
                 "DebugFile",
                 function(opts)
                     vim.g["test#javascript#jest#executable"] = "node --inspect-brk node_modules/.bin/jest " .. opts.args
-                    vim.cmd[[
+                    vim.cmd [[
                         TestFile
                         unlet g:test#javascript#jest#executable
                     ]]
@@ -83,10 +83,9 @@ return {
                         "*.jest.config.js",
                         function(path)
                             vim.api.nvim_command("TestFile --config " .. path .. " " .. opts.args)
-                            vim.cmd[[unlet g:test#javascript#jest#executable]]
+                            vim.cmd [[unlet g:test#javascript#jest#executable]]
                         end
                     )
-
                 end,
                 { nargs = "*" }
             )

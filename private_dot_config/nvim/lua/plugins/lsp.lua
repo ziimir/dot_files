@@ -18,7 +18,7 @@ return {
                 "rust_analyzer",
                 "clangd",
                 "cssls", "stylelint_lsp",
-                "cspell_ls", -- `npm install -D @cspell/dict-ru_ru` в ~/.local/share/nvim/mason/packages/cspell-lsp
+                "cspell_ls",
             },
         },
         init = function()
@@ -115,6 +115,12 @@ return {
                     on_attach = on_attach,
                     capabilities = capabilities,
                     cmd = { "cspell-lsp", "--stdio", "--config", vim.fn.expand("~/.config/nvim/cspell.json") },
+                    filetypes = EXCLUDE_FILETYPES({
+                        "oil",
+                        "help",
+                        "qf",
+                        "alpha",
+                    }),
                 }
             )
 
@@ -133,6 +139,12 @@ return {
                 severity_sort = true,
             })
         end,
+    },
+    {
+        "ziimir/spelldicts",
+        dev = true,
+        lazy = false,
+        build = ':SpellDictsUpdate', -- нужно потом в ручную запускать `:Lazy build spelldicts` или `:SpellDictsUpdate`
     },
     {
         "saghen/blink.cmp",
