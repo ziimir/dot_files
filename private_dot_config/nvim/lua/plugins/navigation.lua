@@ -8,7 +8,7 @@ return {
     {
         "smoka7/hop.nvim", -- instead of easymotion/vim-easymotion
         config = true,
-        init = function ()
+        init = function()
             local hop = require('hop')
             local directions = require('hop.hint').HintDirection
             local position = require('hop.hint').HintPosition
@@ -22,10 +22,10 @@ return {
 
             vim.keymap.set("", "t", function()
                 hop.hint_char1({ direction = directions.AFTER_CURSOR, current_line_only = true, hint_offset = -1 })
-            end, {remap = true})
+            end, { remap = true })
             vim.keymap.set("", "T", function()
                 hop.hint_char1({ direction = directions.BEFORE_CURSOR, current_line_only = true, hint_offset = 1 })
-            end, {remap = true})
+            end, { remap = true })
 
             vim.keymap.set("", "<leader><leader>f", function()
                 hop.hint_char1({ direction = directions.AFTER_CURSOR })
@@ -36,10 +36,10 @@ return {
 
             vim.keymap.set("", "<leader><leader>t", function()
                 hop.hint_char1({ direction = directions.AFTER_CURSOR, hint_offset = -1 })
-            end, {remap = true})
+            end, { remap = true })
             vim.keymap.set("", "<leader><leader>T", function()
                 hop.hint_char1({ direction = directions.BEFORE_CURSOR, hint_offset = 1 })
-            end, {remap = true})
+            end, { remap = true })
 
             vim.keymap.set("", "<leader><leader>j", function()
                 hop.hint_lines({ direction = directions.AFTER_CURSOR })
@@ -82,36 +82,6 @@ return {
         end
     },
     {
-        "mikavilpas/yazi.nvim",
-        dependencies = "akinsho/bufferline.nvim",
-        opts = {
-            open_file_function = function (chosen_file)
-                local function table_contains(tbl, x)
-                    local found = false
-                    for _, v in pairs(tbl) do
-                        if v == x then
-                            found = true
-                        end
-                    end
-                    return found
-                end
-
-                local img_exts = { "png", "jpg", "jpeg", "gif" }
-                local chosen_file_ext = vim.fn.fnamemodify(chosen_file, ":e");
-
-                if (table_contains(img_exts, chosen_file_ext)) then
-                    vim.ui.open(chosen_file)
-                else
-                    vim.cmd(string.format("edit %s", vim.fn.fnameescape(chosen_file)))
-                end
-            end
-        },
-        init = function()
-            vim.api.nvim_set_keymap("n", "<leader>t", ":Yazi cwd<CR>", {noremap = true})
-            vim.api.nvim_set_keymap("n", "<leader>-", ":Yazi<CR>", {noremap = true})
-        end
-    },
-    {
         "stevearc/oil.nvim",
         opts = {
             keymaps = {
@@ -138,7 +108,8 @@ return {
             view_options = { show_hidden = true },
         },
         init = function()
-            vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+            vim.keymap.set("n", "-", ":Oil<CR>", { desc = "Oil: open parent directory" })
+            vim.keymap.set("n", "<leader>-", ":Oil .<CR>", { desc = "Oil: open project root" })
         end
     },
 }
