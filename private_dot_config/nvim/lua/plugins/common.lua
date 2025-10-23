@@ -84,8 +84,8 @@ return {
                 nvim_version,
             }
             dashboard.section.buttons.val = {
-                dashboard.button("t", "Browse", "<cmd>Yazi cwd<CR>"),
-                dashboard.button("e", "New file", "<cmd>ene<CR>"),
+                dashboard.button("f", "Files", ":Files<CR>"),
+                dashboard.button("e", "New file", ":ene<CR>"),
             }
             dashboard.section.footer.val = lines
             dashboard.opts.opts.noautocmd = true
@@ -94,18 +94,12 @@ return {
         end
     },
     {
-        "folke/zen-mode.nvim",
-        opts = {
-            window = {
-                width = 90,
-                options = {
-                    signcolumn = "no",
-                    number = false,
-                },
-            },
-        },
+        "junegunn/goyo.vim",
         keys = {
-            { "<leader>pz", "<cmd>ZenMode<CR>", desc = "Toggle Zen Mode" },
+            { "<leader>pz", ":Goyo<CR>", desc = "Toggle Zen Mode" },
         },
+        config = function()
+            vim.g.goyo_width = 90
+        end
     }
 }

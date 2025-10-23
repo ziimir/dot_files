@@ -1,5 +1,8 @@
 return {
     "obsidian-nvim/obsidian.nvim",
+    dependencies = {
+        { 'nvim-mini/mini.pick', version = '*' },
+    },
     version = "*", -- recommended, use latest release instead of latest commit
     --ft = "markdown",
     event = {
