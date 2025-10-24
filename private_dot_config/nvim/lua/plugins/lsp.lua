@@ -109,13 +109,14 @@ return {
 
             vim.lsp.config("stylelint_lsp", { on_attach = on_attach, capabilities = capabilities })
 
+            local utils = require('utils')
             vim.lsp.config(
                 "cspell_ls",
                 {
                     on_attach = on_attach,
                     capabilities = capabilities,
                     cmd = { "cspell-lsp", "--stdio", "--config", vim.fn.expand("~/.config/nvim/cspell.json") },
-                    filetypes = EXCLUDE_FILETYPES({
+                    filetypes = utils.exclude_filetypes({
                         "oil",
                         "help",
                         "qf",

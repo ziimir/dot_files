@@ -1,17 +1,34 @@
 -- find merge conflict markers
-vim.api.nvim_set_keymap('n', '<leader>fc', '<ESC>/\\v^[<=>]{7}( .*|$)<CR>', {silent = true})
+vim.api.nvim_set_keymap('n', '<leader>fc', '<ESC>/\\v^[<=>]{7}( .*|$)<CR>', { silent = true })
 
 return {
     -- "tpope/vim-apathy",
     "tpope/vim-abolish",
     "scrooloose/nerdcommenter",
-    "AaronLasseigne/yank-code",
     "AndrewRadev/linediff.vim",
     {
-        "rareitems/hl_match_area.nvim",
-        opts = { matchpairs  = { "(:)", "{:}", "[:]", "<:>" } },
+        "AaronLasseigne/yank-code.nvim",
+        opts = {},
         init = function()
-            vim.api.nvim_set_hl(0, 'MatchArea', {bg = "#FFFFFF"})
+            vim.api.nvim_create_user_command("YankACode", function(opts)
+                -- проброс диапазона в YankCode
+                if opts.range > 0 then
+                    vim.cmd(("%d,%dYankCode"):format(opts.line1, opts.line2))
+                else
+                    vim.cmd("YankCode")
+                end
+
+                local reg = vim.fn.getreg("+")
+                local wrapped = "```\n" .. reg .. "```\n"
+                vim.fn.setreg("+", wrapped)
+            end, { range = true })
+        end,
+    },
+    {
+        "rareitems/hl_match_area.nvim",
+        opts = { matchpairs = { "(:)", "{:}", "[:]", "<:>" } },
+        init = function()
+            vim.api.nvim_set_hl(0, 'MatchArea', { bg = "#FFFFFF" })
         end,
     },
     {

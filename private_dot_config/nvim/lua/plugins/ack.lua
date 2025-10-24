@@ -1,6 +1,8 @@
 return {
     "mileszs/ack.vim",
     init = function()
+        local utils = require('utils')
+
         vim.g.ackprg = "ag --vimgrep"
 
         vim.cmd [[cnoreabbrev Ack Ack!]]
@@ -9,8 +11,29 @@ return {
         vim.cmd [[cnoreabbrev LAckAdd LAckAdd!]]
 
         vim.api.nvim_set_keymap("n", "<Leader>g", ":Ack<Space>", {})
-        vim.api.nvim_set_keymap("n", "<Leader>G", ":Ack<Space>\"\\b<cword>\\b\"<CR>", {})
+        vim.api.nvim_set_keymap("n", "<Leader>G", ":Ack<Space>\"\\b<cword>\\b\"<CR>", { desc = "Ack: find word" })
 
+        vim.keymap.set(
+            "v",
+            "<Leader>G",
+            function()
+                -- выходим из визуального режима
+                vim.api.nvim_feedkeys(
+                    vim.api.nvim_replace_termcodes("<Esc>", true, false, true),
+                    "nx",
+                    false
+                )
+
+                -- ждём, пока Nvim обновит маркеры `'<` и `'>`, затем читаем выделение
+                vim.schedule(function()
+                    local text = require('utils').get_visual_selection()
+
+                    local cmd = "Ack! " .. vim.fn.shellescape(utils.escape_for_regex(text))
+                    vim.fn.feedkeys(":" .. cmd, "n")
+                end)
+            end,
+            { desc = "Ack: find selection" }
+        )
         vim.keymap.set(
             "n",
             "<Leader>af",
@@ -20,9 +43,10 @@ return {
 
                 local cmd = "Ack! " .. vim.fn.shellescape(pattern)
                 vim.fn.feedkeys(":" .. cmd, "n")
-            end
+            end,
+            { desc = "Ack: find filename" }
         )
-       vim.keymap.set(
+        vim.keymap.set(
             "n",
             "<Leader>ap",
             function()
@@ -31,7 +55,8 @@ return {
 
                 local cmd = "Ack! " .. vim.fn.shellescape(pattern)
                 vim.fn.feedkeys(":" .. cmd, "n")
-            end
+            end,
+            { desc = "Ack: find file path" }
         )
     end
 }
