@@ -87,6 +87,7 @@ return {
     {
         "stevearc/conform.nvim",
         opts = {
+            notify_on_error = true,
             -- filetypes list:
             -- :echo getcompletion('', 'filetype')
             -- list to filetypes starting with a 'c':

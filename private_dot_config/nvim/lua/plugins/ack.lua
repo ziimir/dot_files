@@ -3,7 +3,18 @@ return {
     init = function()
         local utils = require('utils')
 
-        vim.g.ackprg = "ag --vimgrep"
+        --vim.g.ackprg = "ag --vimgrep"
+        --local ag_file_globs = {
+        --"-G .*\\.tsx",
+        --"-G .*\\.test\\.tsx",
+        --"-G .*\\.story\\.tsx",
+        --}
+        vim.g.ackprg = "rg --vimgrep --hidden --follow --glob \"!.git\" --glob \"!.obsidian\""
+        local rg_file_globs = {
+            "--glob \"*\\.tsx\"",
+            "--glob \"*\\.test\\.tsx\"",
+            "--glob \"*\\.story\\.tsx\"",
+        }
 
         vim.cmd [[cnoreabbrev Ack Ack!]]
         vim.cmd [[cnoreabbrev AckAdd AckAdd!]]
@@ -57,6 +68,22 @@ return {
                 vim.fn.feedkeys(":" .. cmd, "n")
             end,
             { desc = "Ack: find file path" }
+        )
+        vim.keymap.set(
+            'n',
+            '<Leader>ag',
+            function()
+                return vim.fn['fzf#run'](
+                    {
+                        source = rg_file_globs,
+                        sink = function(line)
+                            local cmd = "Ack! " .. line
+                            vim.fn.feedkeys(":" .. cmd .. " ", "n")
+                        end
+                    }
+                )
+            end,
+            { noremap = true }
         )
     end
 }

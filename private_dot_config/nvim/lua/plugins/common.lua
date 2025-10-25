@@ -101,5 +101,20 @@ return {
         config = function()
             vim.g.goyo_width = 90
         end
+    },
+    {
+        "folke/noice.nvim",
+        event = "VeryLazy",
+        dependencies = { "MunifTanjim/nui.nvim" },
+        opts = {
+            lsp       = {
+                hover = { enabled = true, opts = { border = "single" } },
+                signature = { enabled = true },
+            },
+            messages  = { enabled = false },
+            cmdline   = { enabled = false },
+            popupmenu = { enabled = false },
+            presets   = { lsp_doc_border = true },
+        },
     }
 }

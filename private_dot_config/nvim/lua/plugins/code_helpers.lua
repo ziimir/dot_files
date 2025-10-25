@@ -59,4 +59,19 @@ return {
             vim.keymap.set('n', 'gS', require('treesj').split)
         end
     },
+    {
+        "echasnovski/mini.indentscope",
+        version = "*",
+        event = { "BufReadPre", "BufNewFile" },
+        opts = {
+            draw = { delay = 0 },
+            options = { try_as_border = true },
+        },
+        init = function()
+            vim.api.nvim_create_autocmd("FileType", {
+                pattern = { "markdown", "alpha" },
+                callback = function() vim.b.miniindentscope_disable = true end,
+            })
+        end,
+    }
 }
