@@ -4,49 +4,6 @@ return {
     "nvim-treesitter/nvim-treesitter-textobjects",
     "windwp/nvim-ts-autotag",
     {
-        "OXY2DEV/markview.nvim",
-        lazy = false,
-        priority = 49,
-        config = function()
-            local presets = require("markview.presets");
-            require("markview").setup({
-                preview = {
-                    enable = false,
-                },
-                markdown = {
-                    headings = presets.headings.glow,
-                    tables = presets.single,
-                },
-                html = { enable = false },
-                yaml = { enable = false },
-            });
-
-            vim.api.nvim_create_autocmd("FileType", {
-                pattern = "markdown",
-                callback = function()
-                    vim.keymap.set(
-                        "n",
-                        "<leader>pp",
-                        "<cmd>Markview splitToggle<CR>",
-                        { buffer = true, desc = "Toggle Markview preview" }
-                    )
-
-                    vim.keymap.set(
-                        "n",
-                        "<leader>pP",
-                        "<cmd>Markview Toggle<CR>",
-                        { buffer = true, desc = "Toggle Markview preview" }
-                    )
-                end,
-            })
-        end
-    },
-    {
-        'SCJangra/table-nvim',
-        ft = 'markdown',
-        opts = {},
-    },
-    {
         "nvim-treesitter/nvim-treesitter",
         build = ":TSUpdate",
         config = function()

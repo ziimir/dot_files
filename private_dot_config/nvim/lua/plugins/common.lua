@@ -63,6 +63,12 @@ return {
         }
     },
     {
+        "godlygeek/tabular",
+        config = function()
+            vim.cmd([[AddTabularPattern first_dash /^[^-]*\zs-/l1]])
+        end
+    },
+    {
         "goolord/alpha-nvim",
         config = function()
             local dashboard = require("alpha.themes.dashboard")
@@ -95,26 +101,60 @@ return {
     },
     {
         "junegunn/goyo.vim",
-        keys = {
-            { "<leader>pz", ":Goyo<CR>", desc = "Toggle Zen Mode" },
-        },
-        config = function()
+        dependencies = { "junegunn/limelight.vim" },
+        init = function()
             vim.g.goyo_width = 90
+
+            local group = vim.api.nvim_create_augroup("GoyoLimelight", { clear = true })
+            vim.api.nvim_create_autocmd("User", {
+                group = group,
+                pattern = "GoyoEnter",
+                desc = "Включать Limelight при входе в Goyo",
+                callback = function()
+                    vim.cmd("Limelight")
+                end,
+            })
+            vim.api.nvim_create_autocmd("User", {
+                group = group,
+                pattern = "GoyoLeave",
+                desc = "Выключать Limelight при выходе из Goyo",
+                callback = function()
+                    vim.cmd("Limelight!")
+                end,
+            })
         end
     },
     {
         "folke/noice.nvim",
+        dependencies = {
+            "MunifTanjim/nui.nvim",
+            "rcarriga/nvim-notify",
+        },
         event = "VeryLazy",
-        dependencies = { "MunifTanjim/nui.nvim" },
         opts = {
-            lsp       = {
-                hover = { enabled = true, opts = { border = "single" } },
+            cmdline = { enabled = false },
+            messages = { enabled = false },
+            lsp = {
+                hover = { enabled = true },
                 signature = { enabled = true },
+                progress = { enabled = true },
+                message = { enabled = true },
             },
-            messages  = { enabled = false },
-            cmdline   = { enabled = false },
-            popupmenu = { enabled = false },
-            presets   = { lsp_doc_border = true },
+            presets = { lsp_doc_border = true },
+            views = {
+                hover  = {
+                    border = { style = "single" },
+                    win_options = { winblend = 0 },
+                },
+                popup  = {
+                    border = { style = "single" },
+                    win_options = { winblend = 0 },
+                },
+                notify = {
+                    border = { style = "single" },
+                    win_options = { winblend = 0 },
+                },
+            }
         },
     }
 }

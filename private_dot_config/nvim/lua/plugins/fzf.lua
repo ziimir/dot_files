@@ -6,6 +6,9 @@ return {
             vim.g.fzf_preview_window = { 'up:50%', 'ctrl-/' }
             vim.g.fzf_layout = { down = '100%' }
             vim.g.fzf_action = {
+                ["ctrl-t"] = 'tab split',
+                ["ctrl-x"] = 'split',
+                ["ctrl-v"] = 'vsplit',
                 ["ctrl-q"] = function(selected)
                     local items = {}
                     for _, path in ipairs(selected) do

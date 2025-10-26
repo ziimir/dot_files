@@ -11,8 +11,22 @@ local function hl_name()
 end
 
 -- ----- helpers ---------------------------------------------------------------
+local function buf_disabled(buf)
+    return vim.b[buf] and vim.b[buf].foldctx_disable
+end
+
 local function ft_allowed(buf)
     return vim.tbl_contains(opts.filetypes, vim.bo[buf].filetype)
+end
+
+local function apply_hl()
+    if type(opts.hl) == "table" and opts.hl.name then
+        vim.api.nvim_set_hl(0, opts.hl.name, {
+            fg   = opts.hl.fg or "#7aa2f7",
+            bg   = opts.hl.bg,
+            bold = opts.hl.bold,
+        })
+    end
 end
 
 -- текущий регион по фолдам (ufo/treesitter/indent)
@@ -106,6 +120,7 @@ local function render(win)
     local buf = vim.api.nvim_win_get_buf(win)
     vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
     if not enabled then return end
+    if buf_disabled(buf) then return end
     if not ft_allowed(buf) then return end
 
     local cur = vim.api.nvim_win_get_cursor(win)[1]
@@ -148,7 +163,7 @@ function M.setup(user)
 
     -- выставить hl (если передали таблицу цветом)
     if type(opts.hl) == "table" and opts.hl.name then
-        vim.api.nvim_set_hl(0, opts.hl.name, { fg = opts.hl.fg or "#7aa2f7", bg = opts.hl.bg, bold = opts.hl.bold })
+        apply_hl()
     end
 
     local grp = vim.api.nvim_create_augroup("FoldCtxVText", { clear = true })
@@ -167,6 +182,25 @@ function M.setup(user)
         callback = function()
             local buf = vim.api.nvim_get_current_buf()
             vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+        end,
+    })
+
+    -- цвета сбрасываются при смене темы → вернуть
+    vim.api.nvim_create_autocmd("ColorScheme", {
+        group = grp,
+        callback = function()
+            apply_hl()
+            schedule_update()
+        end,
+    })
+
+    -- если включаешь/выключаешь Limelight через Goyo — перерисовать после выхода
+    vim.api.nvim_create_autocmd("User", {
+        group = grp,
+        pattern = { "GoyoLeave" }, -- можно и "GoyoEnter" при желании
+        callback = function()
+            apply_hl()
+            schedule_update()
         end,
     })
 end
@@ -188,5 +222,18 @@ function M.set_mode(mode) opts.folds = (mode == "all") and "all" or "headings" e
 function M.set_filetypes(list) opts.filetypes = list or { "markdown" } end
 
 function M.update_now() render(0) end
+
+function M.disable_in_buf(buf)
+    buf = buf or 0
+    vim.b[buf].foldctx_disable = true
+    vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+end
+
+function M.enable_in_buf(buf)
+    buf = buf or 0
+    vim.b[buf].foldctx_disable = false
+    -- перерисовать, если нужно
+    schedule_update()
+end
 
 return M

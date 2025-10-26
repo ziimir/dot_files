@@ -22,15 +22,4 @@ return {
             vim.keymap.set("n", "zm", require("ufo").closeAllFolds)
         end
     },
-    {
-        "ziimir/foldctx",
-        dev = true,
-        lazy = false,
-        config = function()
-            require("foldctx").setup({
-                folds = "headings",
-                filetypes = { "markdown" },
-            })
-        end,
-    },
 }
