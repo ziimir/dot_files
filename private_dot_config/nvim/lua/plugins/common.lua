@@ -100,31 +100,6 @@ return {
         end
     },
     {
-        "junegunn/goyo.vim",
-        dependencies = { "junegunn/limelight.vim" },
-        init = function()
-            vim.g.goyo_width = 90
-
-            local group = vim.api.nvim_create_augroup("GoyoLimelight", { clear = true })
-            vim.api.nvim_create_autocmd("User", {
-                group = group,
-                pattern = "GoyoEnter",
-                desc = "Включать Limelight при входе в Goyo",
-                callback = function()
-                    vim.cmd("Limelight")
-                end,
-            })
-            vim.api.nvim_create_autocmd("User", {
-                group = group,
-                pattern = "GoyoLeave",
-                desc = "Выключать Limelight при выходе из Goyo",
-                callback = function()
-                    vim.cmd("Limelight!")
-                end,
-            })
-        end
-    },
-    {
         "folke/noice.nvim",
         dependencies = {
             "MunifTanjim/nui.nvim",

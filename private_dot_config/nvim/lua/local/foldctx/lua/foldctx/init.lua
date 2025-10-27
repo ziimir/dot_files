@@ -193,16 +193,6 @@ function M.setup(user)
             schedule_update()
         end,
     })
-
-    -- если включаешь/выключаешь Limelight через Goyo — перерисовать после выхода
-    vim.api.nvim_create_autocmd("User", {
-        group = grp,
-        pattern = { "GoyoLeave" }, -- можно и "GoyoEnter" при желании
-        callback = function()
-            apply_hl()
-            schedule_update()
-        end,
-    })
 end
 
 function M.enable()
