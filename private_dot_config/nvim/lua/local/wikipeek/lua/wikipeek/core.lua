@@ -32,6 +32,92 @@ local function norm(s)
     return trim(u_lower(s or "")):gsub("%s+", " ")
 end
 
+-- разбор строки с несколькими неэкранированными '#': "A#B#C" -> {"A","B","C"}
+local function split_unescaped_hashes(s)
+    local out, buf = {}, {}
+    local i, n = 1, #s
+    while i <= n do
+        local ch = s:sub(i, i)
+        if ch == "\\" and s:sub(i + 1, i + 1) == "#" then
+            table.insert(buf, "#"); i = i + 2
+        elseif ch == "#" then
+            table.insert(out, trim(table.concat(buf))); buf = {}; i = i + 1
+        else
+            table.insert(buf, ch); i = i + 1
+        end
+    end
+    table.insert(out, trim(table.concat(buf)))
+    -- уберем пустые сегменты (из "A##B")
+    local clean = {}
+    for _, seg in ipairs(out) do if seg ~= "" then table.insert(clean, seg) end end
+    return clean
+end
+
+-- матч заголовка: по "сырому" тексту или obsidian-slug
+local function heading_match(text, wanted)
+    local raw         = norm(text)
+    local slug        = slugify_obsidian(text)
+    local wanted_raw  = norm(wanted)
+    local wanted_slug = normalize_dashes(slugify_obsidian(wanted))
+    return (raw == wanted_raw) or (slug == wanted_slug)
+end
+
+-- парс заголовка в строке: возвращает (is_heading, level, text)
+local function heading_info_at_line(lines, i)
+    local line = lines[i]
+    local hashes, rest = line:match("^%s*(#+)%s*(.*)$")
+    if hashes then
+        rest = rest:gsub("%s*#+%s*$", "")
+        return true, #hashes, rest
+    end
+    if i < #lines then
+        local underline = lines[i + 1]
+        if underline:match("^%s*==+%s*$") then return true, 1, line end
+        if underline:match("^%s*%-%-+%s*$") then return true, 2, line end
+    end
+    return false
+end
+
+-- найти заголовок wanted в диапазоне [from_i .. to_i]
+local function find_heading_in_range(lines, from_i, to_i, wanted)
+    for i = from_i, to_i do
+        local is_h, level, text = heading_info_at_line(lines, i)
+        if is_h and heading_match(text, wanted) then
+            return i, level
+        end
+    end
+    return nil
+end
+
+-- конец секции: до следующего заголовка уровня <= level или конца диапазона
+local function section_end_in_range(lines, start_i, level, to_i)
+    local j = start_i + 1
+    while j <= to_i do
+        local is_h, lv = heading_info_at_line(lines, j)
+        if is_h and lv <= level then return j - 1 end
+        j = j + 1
+    end
+    return to_i
+end
+
+-- найти секцию по ПУТИ заголовков: {"have-to","Необязательность"}
+local function section_bounds_by_path(lines, path)
+    local from_i, to_i = 1, #lines
+    local start_i, level, end_i
+
+    for idx, seg in ipairs(path) do
+        local si, lv = find_heading_in_range(lines, from_i, to_i, seg)
+        if not si then return nil end
+        start_i, level = si, lv
+        end_i = section_end_in_range(lines, start_i, level, to_i)
+        -- следующий поиск — внутри найденной секции, начиная со строки после заголовка
+        from_i, to_i = start_i + 1, end_i
+    end
+
+    -- если путь из одного сегмента — вернуть всю секцию; если из нескольких — вернуть секцию последнего сегмента
+    return start_i, end_i
+end
+
 -- найти wikilink под курсором: [[...]] (с опциональным ! перед [[)
 local function wikilink_under_cursor()
     local line = vim.api.nvim_get_current_line()
@@ -49,46 +135,33 @@ local function wikilink_under_cursor()
             -- распарсим alias: первый неэкранированный |
             local alias_i
             do
-                local i = 1
-                while i <= #inner do
-                    local ch = inner:sub(i, i)
-                    local prev = i > 1 and inner:sub(i - 1, i - 1) or ""
+                local j = 1
+                while j <= #inner do
+                    local ch = inner:sub(j, j)
+                    local prev = j > 1 and inner:sub(j - 1, j - 1) or ""
                     if ch == "|" and prev ~= "\\" then
-                        alias_i = i; break
+                        alias_i = j; break
                     end
-                    i = i + 1
+                    j = j + 1
                 end
             end
             local main = alias_i and inner:sub(1, alias_i - 1) or inner
 
-            -- отделим заголовок (#...) от названия
-            local hash_i
-            do
-                local i = 1
-                while i <= #main do
-                    local ch = main:sub(i, i)
-                    local prev = i > 1 and main:sub(i - 1, i - 1) or ""
-                    if ch == "#" and prev ~= "\\" then
-                        hash_i = i; break
-                    end
-                    i = i + 1
-                end
-            end
+            -- РАЗБОР ЦЕПОЧКИ заголовков:
+            local chunks = split_unescaped_hashes(main) -- {"Note","have-to","Необязательность"} или {"#Local"} → {"","Local"}
+            local title = chunks[1] or ""
+            local heading_path = {}
+            for i2 = 2, #chunks do heading_path[#heading_path + 1] = chunks[i2] end
 
-            local title = hash_i and main:sub(1, hash_i - 1) or main
-            local heading = hash_i and main:sub(hash_i + 1) or nil
-
-            -- уберём экранирование \| внутри частей
             title = trim(title):gsub("\\|", "|")
-            heading = heading and trim(heading):gsub("\\|", "|") or nil
 
-            -- особый случай: [[#Heading]] → текущий файл
-            if title == "" and heading then
+            -- особый случай [[#Heading...]] — текущий файл
+            if title == "" and #heading_path > 0 then
                 local curpath = vim.api.nvim_buf_get_name(0)
-                return { embed = embed, title = nil, heading = heading, current_path = curpath }
+                return { embed = embed, title = nil, heading_path = heading_path, current_path = curpath }
             end
 
-            return { embed = embed, title = title, heading = heading }
+            return { embed = embed, title = title, heading_path = heading_path }
         end
         search_from = e + 1
     end
@@ -348,10 +421,11 @@ function M.peek_under_cursor(opts)
     if #lines == 0 then lines = { "(empty file)" } end
 
     local s, e
-    if link.heading and link.heading ~= "" then
-        s, e = section_bounds_by_heading(lines, link.heading)
+    if link.heading_path and #link.heading_path > 0 then
+        s, e = section_bounds_by_path(lines, link.heading_path)
         if not s then
-            return vim.notify("wikipeek: не найден заголовок '" .. link.heading .. "'", vim.log.levels.WARN)
+            return vim.notify("wikipeek: не найден путь заголовков '" .. table.concat(link.heading_path, " > ") .. "'",
+                vim.log.levels.WARN)
         end
     else
         s, e = get_all(lines)
