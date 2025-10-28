@@ -19,18 +19,18 @@ vim.opt.showcmd = true
 vim.opt.cursorline = true
 vim.opt.diffopt = vim.opt.diffopt + "vertical"
 vim.opt.showmode = false
-vim.opt.hidden = true -- allow buffer switching without saving
+vim.opt.hidden = true    -- allow buffer switching without saving
 vim.opt.conceallevel = 0 -- always show all syntax symbols
-vim.opt.laststatus = 3 -- only one window has status line https://www.youtube.com/watch?v=jH5PNvJIa6o
+vim.opt.laststatus = 3   -- only one window has status line https://www.youtube.com/watch?v=jH5PNvJIa6o
 vim.wo.wrap = false
 
-vim.g.mapleader="," -- leader button
+vim.g.mapleader = "," -- leader button
 
 vim.cmd [[set clipboard=unnamedplus]]
 vim.cmd [[set guicursor=]] -- use original cursor in nvim
 
 vim.opt.list = true
-vim.opt.listchars = {tab = "▸ ", eol = "¬",  trail = "•"}
+vim.opt.listchars = { tab = "▸ ", eol = "¬", trail = "•" }
 vim.cmd [[highlight SpecialKey ctermfg=NONE guifg=NONE]]
 
 -- clear search

@@ -10,7 +10,10 @@ return {
     {
         "obsidian-nvim/obsidian.nvim",
         dependencies = {
-            { 'nvim-mini/mini.pick', version = '*' },
+            {
+                "folke/snacks.nvim",
+                opts = { picker = {}, explorer = {} },
+            },
         },
         version = "*",
         ft = "markdown",
@@ -21,12 +24,17 @@ return {
             "BufReadPre " .. vim.fn.expand "~" .. "/Documents/obsidian/*.md"
         },
         opts = {
+            frontmatter = { enabled = false },
             ui = { enable = false }, -- чтобы разметку рендерил только render-markdown.nvim
             legacy_commands = false,
             workspaces = {
                 {
                     name = "english",
                     path = "~/Documents/obsidian/english",
+                },
+                {
+                    name = "english-2",
+                    path = "~/Documents/obsidian/english-2",
                 },
             },
             completion = {
@@ -57,14 +65,20 @@ return {
                     end, "Obs: open link in new tab")
                 end,
             })
+
             vim.api.nvim_create_autocmd("FileType", {
                 pattern = "markdown",
                 callback = function()
                     vim.keymap.set(
                         "n",
                         "<leader>pp",
-                        ":RenderMarkdown toggle<CR>",
-                        { buffer = true, desc = "Toggle RenderMarkdown preview" }
+                        function()
+                            local path = vim.fn.shellescape(vim.fn.expand('%:p'))
+                            local cmd = ([[glow -p %s]]):format(path)
+
+                            vim.cmd("FloatermNew --autoclose=1 " .. cmd)
+                        end,
+                        { buffer = true, desc = "Toggle glow preview" }
                     )
                 end,
             })
@@ -74,6 +88,30 @@ return {
         'SCJangra/table-nvim',
         ft = 'markdown',
         opts = {},
+    },
+    {
+        "ziimir/limelight-section",
+        dependencies = { "junegunn/limelight.vim" },
+        name = "limelight-section",
+        ft = { "markdown" },
+        dev = true,
+        config = function()
+            local limelight_section = require("limelight-section")
+            limelight_section.setup({
+                filetypes = { "markdown" },
+                throttle_ms = 50,
+            })
+
+            vim.keymap.set("n", "<leader>zz", limelight_section.toggle, { desc = "Limelight: toggle section mode" })
+        end
+    },
+    {
+        "ziimir/mdoutline",
+        name = "mdoutline",
+        ft = { "markdown" },
+        dev = true,
+        lazy = true,
+        opts = {}
     },
     {
         "ziimir/wikipeek",
@@ -124,25 +162,5 @@ return {
                 end,
             })
         end
-    },
-    {
-        "ziimir/foldctx",
-        dev = true,
-        lazy = false,
-        ft = { "markdown" },
-        config = function()
-            require("foldctx").setup({
-                folds = "headings",
-                filetypes = { "markdown" },
-            })
-        end,
-    },
-    {
-        "ziimir/mdoutline",
-        name = "mdoutline",
-        ft = { "markdown" },
-        dev = true,
-        lazy = true,
-        opts = {}
     },
 }

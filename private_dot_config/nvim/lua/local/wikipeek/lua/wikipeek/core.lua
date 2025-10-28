@@ -248,76 +248,6 @@ local function find_note_path(title, extra_roots)
     return nil
 end
 
--- найти границы секции по имени заголовка (ATX/Setext)
-local function section_bounds_by_heading(lines, wanted_heading)
-    local n = #lines
-    local found_i, found_level
-
-    -- что ищем: и «сырой» текст, и slug
-    local wanted_raw = norm(wanted_heading)
-    local wanted_slug = slugify_obsidian(wanted_heading)
-    -- на всякий случай нормализуем дефисы в переданном slug (поддержим lets--lets-not)
-    wanted_slug = normalize_dashes(wanted_slug:gsub("%-+", "-"))
-
-    -- вспомогательные парсеры (как у тебя было)
-    local function atx_heading(line)
-        local hashes, rest = line:match("^%s*(#+)%s*(.*)$")
-        if not hashes then return nil end
-        rest = rest:gsub("%s*#+%s*$", "")
-        return { level = #hashes, text = (rest or "") }
-    end
-    local function setext_underline(line)
-        if line:match("^%s*==+%s*$") then return 1 end
-        if line:match("^%s*%-%-+%s*$") then return 2 end
-        return nil
-    end
-
-    -- 1) сначала ATX (# ...)
-    for i = 1, n do
-        local h = atx_heading(lines[i])
-        if h then
-            local raw = norm(h.text)
-            local slug = slugify_obsidian(h.text)
-            if raw == wanted_raw or slug == wanted_slug then
-                found_i, found_level = i, h.level
-                break
-            end
-        end
-    end
-
-    -- 2) если не нашли — Setext (строка + =====/-----)
-    if not found_i then
-        for i = 1, n - 1 do
-            local lvl = setext_underline(lines[i + 1])
-            if lvl then
-                local raw = norm(lines[i])
-                local slug = slugify_obsidian(lines[i])
-                if raw == wanted_raw or slug == wanted_slug then
-                    found_i, found_level = i, lvl
-                    break
-                end
-            end
-        end
-    end
-
-    if not found_i then return nil end
-
-    -- низ секции — перед следующим заголовком уровня <= found_level
-    local j = found_i + 1
-    while j <= n do
-        local h = atx_heading(lines[j])
-        if h and h.level <= found_level then break end
-        if j < n then
-            local lvl = setext_underline(lines[j + 1])
-            if lvl and lvl <= found_level then break end
-        end
-        j = j + 1
-    end
-
-    local to_ = (j <= n) and (j - 1) or n
-    return found_i, to_
-end
-
 -- fallback, если заголовок не указан: весь файл
 local function get_all(lines)
     local n = #lines
@@ -341,9 +271,9 @@ local function open_popup(lines, title)
     pcall(vim.treesitter.start, buf, "markdown")
 
     -- 3) своё окно (как у тебя было)
-    local maxw                 = math.floor(vim.o.columns * 0.8)
-    local maxh                 = math.floor(vim.o.lines * 0.8)
-    local win                  = vim.api.nvim_open_win(buf, true, {
+    local maxw       = math.floor(vim.o.columns * 0.8)
+    local maxh       = math.floor(vim.o.lines * 0.8)
+    local win        = vim.api.nvim_open_win(buf, true, {
         relative  = "editor",
         style     = "minimal",
         border    = "single",
@@ -357,11 +287,13 @@ local function open_popup(lines, title)
         title_pos = "center",
     })
 
-    -- отключаем foldctx в этом буфере
-    vim.b[buf].foldctx_disable = true
-    pcall(function()
-        require("foldctx").disable_in_buf(buf)
-    end)
+    local ok, styler = pcall(require, "styler")
+    if ok then
+        styler.set_theme(win, { colorscheme = "seoulbones" })
+    end
+
+    -- отключаем limelight_section в этом буфере
+    vim.b[buf].limelight_section_disable = true
 
     -- 4) оконные опции; для таблиц лучше без переносов
     local function has_table(ls)
