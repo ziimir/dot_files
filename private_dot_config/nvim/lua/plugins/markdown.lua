@@ -111,7 +111,10 @@ return {
         ft = { "markdown" },
         dev = true,
         lazy = true,
-        opts = {}
+        opts = {},
+        init = function()
+            vim.keymap.set("n", "<leader>po", "<cmd>MdOutlineToggle<CR>", { desc = "Markdown Outline" })
+        end
     },
     {
         "ziimir/wikipeek",

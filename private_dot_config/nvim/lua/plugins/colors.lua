@@ -10,12 +10,4 @@ return {
             --vim.cmd [[colorscheme seoul256-light]]
         end
     },
-    {
-        "folke/styler.nvim",
-        opts = {
-            themes = {
-                markdown = { colorscheme = "seoulbones" },
-            },
-        }
-    }
 }

@@ -90,6 +90,7 @@ return {
                 nvim_version,
             }
             dashboard.section.buttons.val = {
+                dashboard.button("d", "Dir", ":Oil .<CR>"),
                 dashboard.button("f", "Files", ":Files<CR>"),
                 dashboard.button("e", "New file", ":ene<CR>"),
             }

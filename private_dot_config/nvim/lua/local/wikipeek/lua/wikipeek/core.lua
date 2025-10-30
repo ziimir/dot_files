@@ -271,9 +271,9 @@ local function open_popup(lines, title)
     pcall(vim.treesitter.start, buf, "markdown")
 
     -- 3) своё окно (как у тебя было)
-    local maxw       = math.floor(vim.o.columns * 0.8)
-    local maxh       = math.floor(vim.o.lines * 0.8)
-    local win        = vim.api.nvim_open_win(buf, true, {
+    local maxw                           = math.floor(vim.o.columns * 0.8)
+    local maxh                           = math.floor(vim.o.lines * 0.8)
+    local win                            = vim.api.nvim_open_win(buf, true, {
         relative  = "editor",
         style     = "minimal",
         border    = "single",
@@ -286,11 +286,6 @@ local function open_popup(lines, title)
         title     = title and (" " .. title .. " ") or nil,
         title_pos = "center",
     })
-
-    local ok, styler = pcall(require, "styler")
-    if ok then
-        styler.set_theme(win, { colorscheme = "seoulbones" })
-    end
 
     -- отключаем limelight_section в этом буфере
     vim.b[buf].limelight_section_disable = true

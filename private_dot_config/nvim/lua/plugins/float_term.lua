@@ -15,8 +15,5 @@ return {
         vim.api.nvim_set_keymap("t", "<c-s>q", "<C-\\><C-n>:FloatermKill<CR>", { noremap = true, silent = true })
         vim.api.nvim_set_keymap("t", "<c-s>[", "<C-\\><C-n>:FloatermPrev<CR>", { noremap = true, silent = true })
         vim.api.nvim_set_keymap("t", "<c-s>]", "<C-\\><C-n>:FloatermNext<CR>", { noremap = true, silent = true })
-
-        vim.cmd [[hi Floaterm guibg=black]]
-        vim.cmd [[hi Floaterm guifg=white]]
     end
 }

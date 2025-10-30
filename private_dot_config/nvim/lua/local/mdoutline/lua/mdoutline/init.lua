@@ -1,81 +1,66 @@
-local M        = {}
+local M      = {}
 
--- ===== state / defaults ======================================================
-local ns       = vim.api.nvim_create_namespace("mdoutline")
-local states   = {} -- per-source-buf: { win, buf, items = { {lnum, level, text}... }, throttle }
-local defaults = {
-    side        = "right",
-    width       = 32,
-    focus       = false,
-    max_level   = nil,
-    -- иконки: заголовки по глубине (берём по depth+1), ссылки и эмбеды
-    icons       = {
+-- ===== state / defaults =====
+local ns     = vim.api.nvim_create_namespace("mdoutline")
+local states = {} -- per-source-buf → {win, buf, items}
+
+local opts   = {
+    max_level = nil,
+    icons = {
         heading = { "󰓹", "󰓹", "󰓹", "󰓹", "󰓹", "󰓹" },
         link    = "󰌹",
         embed   = "󰈔",
     },
-    filetypes   = { "markdown" },
-    auto_update = true,
-    throttle_ms = 60,
-    -- опция на всякий случай
-    wikilinks   = true,
+    filetypes = { "markdown" },
+    wikilinks = true,
+
+    -- попап всегда по центру и большой
+    float = {
+        width    = 0.75, -- доля от ширины экрана (0..1) или число колонок
+        height   = 0.85, -- доля от высоты экрана (0..1) или число строк
+        border   = "rounded",
+        winblend = 0,
+        zindex   = 60,
+        winhl    = {
+            Normal      = "NormalFloat",
+            FloatBorder = "FloatBorder",
+            CursorLine  = "Visual",
+            SignColumn  = "NormalFloat",
+        },
+    },
 }
 
-local opts     = vim.deepcopy(defaults)
-
 local function is_markdown(buf)
-    local ft = vim.bo[buf].filetype
-    return vim.tbl_contains(opts.filetypes, ft)
+    return vim.tbl_contains(opts.filetypes, vim.bo[buf].filetype)
 end
 
--- "A#B#C"                     -> "A > B > C"
--- "A #  B"                    -> "A > B"
--- "A\\#B#C"                   -> "A#B > C"   (экранированный # сохраняется)
--- "#Heading" / "Note##Part"   -> "Heading" / "Note > Part" (пустые сегменты игнорим)
+-- "A#B#C" → "A > B > C" (экранированный \# сохраняем)
 local function _to_breadcrumb(s)
     s = s or ""
     local parts, buf = {}, {}
     local i, n = 1, #s
-
     local function trim(x) return (x:gsub("^%s+", ""):gsub("%s+$", "")) end
-
     while i <= n do
         local ch = s:sub(i, i)
-        if ch == "\\" then
-            local nextch = s:sub(i + 1, i + 1)
-            if nextch == "#" then
-                table.insert(buf, "#") -- экранированный #
-                i = i + 2
-            else
-                table.insert(buf, ch) -- обычный бэкслеш
-                i = i + 1
-            end
+        if ch == "\\" and s:sub(i + 1, i + 1) == "#" then
+            table.insert(buf, "#"); i = i + 2
         elseif ch == "#" then
-            local seg = trim(table.concat(buf))
-            if seg ~= "" then table.insert(parts, seg) end
-            buf = {}
-            i = i + 1
+            local seg = trim(table.concat(buf)); if seg ~= "" then parts[#parts + 1] = seg end
+            buf = {}; i = i + 1
         else
-            table.insert(buf, ch)
-            i = i + 1
+            table.insert(buf, ch); i = i + 1
         end
     end
-
-    local last = trim(table.concat(buf))
-    if last ~= "" then table.insert(parts, last) end
-
+    local last = (table.concat(buf):gsub("^%s+", ""):gsub("%s+$", ""))
+    if last ~= "" then parts[#parts + 1] = last end
     return table.concat(parts, " > ")
 end
 
--- извлечь читаемую подпись из тела вики-ссылки (target|alias → alias; path/Note.md#h → Note)
 local function _clean_target(t)
     if not t or t == "" then return "" end
-    t = t:gsub("%.md$", "")        -- убрать .md
-    --t = t:gsub("#.*$", "")         -- убрать якорь
-    t = t:gsub("%^.*$", "")        -- убрать block id
-    t = t:match("([^/\\]+)$") or t -- basename
-    t = t:gsub("_", " ")           -- подчёркивания → пробелы
-    return t
+    t = t:gsub("%.md$", ""):gsub("%^.*$", "")
+    t = t:match("([^/\\]+)$") or t
+    return (t:gsub("_", " "))
 end
 
 local function wikilink_label(body)
@@ -83,322 +68,227 @@ local function wikilink_label(body)
     return alias or _clean_target(target or _to_breadcrumb(body))
 end
 
--- ===== parsing ===============================================================
--- парсим документ: заголовки с depth по стеку + кросс-ссылки ([[...]] и ![[...]])
+-- ===== parse =====
 local function parse_outline(bufnr)
     local lines   = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
     local items   = {}
     local in_code = false
-
-    -- стек markdown-уровней (1..6); depth = #stack - 1
     local stack   = {}
     local function push(level) table.insert(stack, level) end
-    local function pop_to(level)
-        while #stack > 0 and stack[#stack] >= level do
-            table.remove(stack)
-        end
-    end
+    local function pop_to(level) while #stack > 0 and stack[#stack] >= level do table.remove(stack) end end
     local function cur_depth() return #stack - 1 end
-    local function child_depth()
-        local d = cur_depth()
-        return (d >= 0) and (d + 1) or 0
-    end
+    local function child_depth() return math.max(0, cur_depth() + 1) end
 
     for i, s in ipairs(lines) do
         local lnum = i
-
-        -- fenced code blocks ``` / ~~~
         local fence = s:match("^%s*```") or s:match("^%s*~~~")
         if fence then in_code = not in_code end
+        if in_code then goto continue end
 
-        if not in_code then
-            -- ===== Заголовки =====
-            -- ATX: #### Title ####
-            local hashes, text = s:match("^%s*(#+)%s*(.+)")
-            if hashes then
-                local level = #hashes
-                if not opts.max_level or level <= opts.max_level then
-                    text = text:gsub("%s*#+%s*$", "")
-                    if opts.wikilinks then
-                        text = text:gsub("!%[%[([^%]]-)%]%]", function(body) return wikilink_label(body) end)
-                        text = text:gsub("%[%[([^%]]-)%]%]", function(body) return wikilink_label(body) end)
-                    end
-                    pop_to(level)
-                    push(level)
-                    local depth = math.max(0, cur_depth())
-                    table.insert(items, { kind = "heading", level = level, depth = depth, text = text, lnum = lnum })
+        -- ATX headings
+        local hashes, text = s:match("^%s*(#+)%s*(.+)")
+        if hashes then
+            local level = #hashes
+            if not opts.max_level or level <= opts.max_level then
+                text = text:gsub("%s*#+%s*$", "")
+                if opts.wikilinks then
+                    text = text:gsub("!%[%[([^%]]-)%]%]", function(b) return wikilink_label(b) end)
+                    text = text:gsub("%[%[([^%]]-)%]%]", function(b) return wikilink_label(b) end)
                 end
-            end
-
-            -- ===== Кросс-ссылки (и на строке заголовка, и на обычной строке) =====
-            if opts.wikilinks then
-                -- сначала эмбеды: ![[...]]
-                local tmp = s
-                tmp = tmp:gsub("!%[%[([^%]]-)%]%]", function(body)
-                    local label = wikilink_label(body)
-                    table.insert(items, { kind = "embed", depth = child_depth(), text = label, lnum = lnum })
-                    return "" -- чтобы не поймать второй раз как обычную ссылку
-                end)
-                -- затем обычные [[...]]
-                tmp:gsub("%[%[([^%]]-)%]%]", function(body)
-                    local label = wikilink_label(body)
-                    table.insert(items, { kind = "link", depth = child_depth(), text = label, lnum = lnum })
-                end)
+                pop_to(level); push(level)
+                items[#items + 1] = {
+                    kind = "heading",
+                    level = level,
+                    depth = math.max(0, cur_depth()),
+                    text = text,
+                    lnum =
+                        lnum
+                }
             end
         end
-    end
 
+        if opts.wikilinks then
+            local tmp = s
+            tmp = tmp:gsub("!%[%[([^%]]-)%]%]", function(b)
+                items[#items + 1] = { kind = "embed", depth = child_depth(), text = wikilink_label(b), lnum = lnum }
+                return ""
+            end)
+            tmp:gsub("%[%[([^%]]-)%]%]", function(b)
+                items[#items + 1] = { kind = "link", depth = child_depth(), text = wikilink_label(b), lnum = lnum }
+            end)
+        end
+        ::continue::
+    end
     return items
 end
 
--- ===== outline buffer/window =================================================
-local function ensure_outline_for(bufnr)
-    local st = states[bufnr]
+-- ===== popup =====
+local function float_conf()
+    local cols, lines = vim.o.columns, vim.o.lines
+    local w = opts.float.width; if w <= 1 then w = math.max(30, math.floor(cols * w)) end
+    local h = opts.float.height; if h <= 1 then h = math.max(10, math.floor(lines * h)) end
+    local row = math.floor((lines - h) / 2)
+    local col = math.floor((cols - w) / 2)
+    return {
+        relative = "editor",
+        style = "minimal",
+        border = opts.float.border,
+        zindex = opts.float.zindex,
+        noautocmd = true,
+        width = w,
+        height = h,
+        row = row,
+        col = col,
+    }
+end
+
+local function ensure_outline_for(src_buf)
+    local st = states[src_buf]
     if st and st.win and vim.api.nvim_win_is_valid(st.win) and st.buf and vim.api.nvim_buf_is_valid(st.buf) then
         return st
     end
+    local buf                                                           = vim.api.nvim_create_buf(false, true)
+    local win                                                           = vim.api.nvim_open_win(buf, true, float_conf()) -- всегда в фокус
 
-    -- открыть сплит справа/слева
-    local curwin = vim.api.nvim_get_current_win()
-    if opts.side == "left" then
-        vim.cmd("topleft vertical split")
-    else
-        vim.cmd("botright vertical split")
-    end
-    local win = vim.api.nvim_get_current_win()
-    vim.api.nvim_win_set_width(win, opts.width)
+    vim.bo[buf].buftype                                                 = "nofile"
+    vim.bo[buf].bufhidden                                               = "wipe"
+    vim.bo[buf].swapfile                                                = false
+    vim.bo[buf].modifiable                                              = false
+    vim.bo[buf].filetype                                                = "mdoutline"
 
-    -- создать/подключить scratch-буфер
-    local buf = vim.api.nvim_create_buf(false, true) -- [listed=false, scratch]
-    vim.api.nvim_win_set_buf(win, buf)
+    local wo                                                            = vim.wo[win]
+    wo.wrap, wo.number, wo.relativenumber, wo.cursorline, wo.signcolumn = false, false, false, true, "no"
+    wo.winblend                                                         = opts.float.winblend
+    local winhl                                                         = {}
+    for k, v in pairs(opts.float.winhl or {}) do winhl[#winhl + 1] = k .. ":" .. v end
+    if #winhl > 0 then wo.winhl = table.concat(winhl, ",") end
 
-    -- офорим окно
-    vim.bo[buf].buftype = "nofile"
-    vim.bo[buf].bufhidden = "wipe"
-    vim.bo[buf].swapfile = false
-    vim.bo[buf].modifiable = false
-    vim.bo[buf].filetype = "mdoutline"
-    vim.wo[win].wrap = false
-    vim.wo[win].number = false
-    vim.wo[win].relativenumber = false
-    vim.wo[win].cursorline = true
-    vim.wo[win].signcolumn = "no"
-
-    -- кеймапы только в outline
+    -- локальные кеймапы
     local function map(lhs, rhs, desc)
-        vim.keymap.set("n", lhs, rhs, { buffer = buf, silent = true, nowait = true, desc = desc })
+        vim.keymap.set("n", lhs, rhs,
+            { buffer = buf, silent = true, nowait = true, desc = desc })
     end
-    map("q", function() M.close(bufnr) end, "Close outline")
-    map("r", function() M.refresh(bufnr) end, "Refresh outline")
-    map("<CR>", function() M.jump_at_cursor(bufnr) end, "Jump to heading")
+    map("q", function() M.close(src_buf) end, "Close outline")
+    map("r", function() M.refresh(src_buf) end, "Refresh outline")
+    map("<CR>", function()
+        M.jump_at_cursor(src_buf)
 
-    -- не забирать фокус (если надо)
-    if not opts.focus then
-        vim.api.nvim_set_current_win(curwin)
-    end
+        local ok, ufo = pcall(require, 'ufo')
+        if ok then
+            local cur  = vim.api.nvim_win_get_cursor(0)[1]
+            local last = vim.api.nvim_buf_line_count(0)
+            local lvl  = vim.fn.foldlevel(cur)
+            local next = (cur < last) and vim.fn.foldlevel(cur + 1) or 0
+            if lvl == 0 and next == 0 then
+                return
+            end
 
-    states[bufnr] = { win = win, buf = buf, items = {}, throttle = nil }
-    return states[bufnr]
+            ufo.closeAllFolds()           -- закрыть всё (без изменения foldlevel)
+            vim.cmd('silent! normal! zv') -- раскрыть родителей и заголовок текущего
+            vim.cmd('silent! normal! zO') -- раскрыть всё поддерево текущей секции
+        else
+            return
+        end
+    end, "Jump to heading")
+
+    -- реагировать на :VimResized — перепозиционировать
+    local grp = vim.api.nvim_create_augroup("MdOutlineFloat:" .. src_buf, { clear = true })
+    vim.api.nvim_create_autocmd("VimResized", {
+        group = grp,
+        callback = function()
+            if vim.api.nvim_win_is_valid(win) then
+                vim.api.nvim_win_set_config(win, float_conf())
+            end
+        end,
+    })
+
+    states[src_buf] = { win = win, buf = buf, items = {} }
+    return states[src_buf]
 end
 
-local function render(bufnr)
-    local st = states[bufnr]
-    if not st or not (st.win and vim.api.nvim_win_is_valid(st.win)) then return end
-    if not (st.buf and vim.api.nvim_buf_is_valid(st.buf)) then return end
-    local items = st.items or {}
-    local lines = {}
-    local marks = {}
+-- ===== render / jump =====
+local function render(src_buf)
+    local st = states[src_buf]; if not st then return end
+    if not (vim.api.nvim_win_is_valid(st.win) and vim.api.nvim_buf_is_valid(st.buf)) then return end
+    local lines, marks = {}, {}
 
-    local pad_unit = "  "
-    for idx, it in ipairs(items) do
-        local depth = math.max(0, it.depth or 0)
-        local indent = string.rep(pad_unit, depth)
-
-        local icon
-        if it.kind == "heading" then
-            local arr = opts.icons.heading or {}
-            icon = arr[math.min(depth + 1, #arr)] or arr[1] or "•"
-        elseif it.kind == "embed" then
-            icon = (opts.icons.embed or "󰈔")
-        else -- "link"
-            icon = (opts.icons.link or "󰌹")
-        end
-
-        lines[idx] = ("%s%s %s"):format(indent, icon, it.text)
-        marks[idx] = it.lnum
+    for i, it in ipairs(st.items or {}) do
+        local depth  = math.max(0, it.depth or 0)
+        local indent = string.rep("  ", depth)
+        local icon   = (it.kind == "heading" and (opts.icons.heading[math.min(depth + 1, #opts.icons.heading)] or "•"))
+            or (it.kind == "embed" and (opts.icons.embed or "󰈔"))
+            or (opts.icons.link or "󰌹")
+        lines[i]     = ("%s%s %s"):format(indent, icon, it.text)
+        marks[i]     = it.lnum
     end
 
     vim.bo[st.buf].modifiable = true
     vim.api.nvim_buf_set_lines(st.buf, 0, -1, false, lines)
     vim.api.nvim_buf_clear_namespace(st.buf, ns, 0, -1)
-
-    -- по одной метке на строку outline с исходным lnum
-    for i, lnum in ipairs(marks) do
-        vim.api.nvim_buf_set_extmark(st.buf, ns, i - 1, 0, {
-            end_row = i - 1,
-            end_col = 0,
-            hl_group = "",  -- не подсвечиваем строку целиком
-            virt_text = {}, -- пусто
-            right_gravity = false,
-            hl_mode = "combine",
-            -- metadata: проложим через "details"
-            -- (читаться будет через nvim_buf_get_extmarks / opts)
-            -- нет прямого поля для meta, поэтому используем "virt_text_pos" = "overlay" хак? — не нужно.
-        })
-    end
     vim.bo[st.buf].modifiable = false
 end
 
--- найти индекс активного заголовка по позиции курсора в source
-local function find_active_index(items, curline)
-    if #items == 0 then return nil end
-    -- бинарный поиск: последний with lnum <= curline
-    local lo, hi, ans = 1, #items, 1
-    while lo <= hi do
-        local mid = math.floor((lo + hi) / 2)
-        if items[mid].lnum <= curline then
-            ans = mid
-            lo = mid + 1
-        else
-            hi = mid - 1
-        end
-    end
-    return ans
+local function any_win_for_buf(buf)
+    local wins = vim.fn.win_findbuf(buf)
+    return (wins and wins[1]) or nil
 end
 
-local function sync_cursor(bufnr)
-    local st = states[bufnr]
-    if not st or not (st.win and vim.api.nvim_win_is_valid(st.win)) then return end
-    local items = st.items
-    if not items or #items == 0 then return end
-    local cur = vim.api.nvim_win_get_cursor(vim.fn.bufwinid(bufnr) ~= -1 and vim.fn.bufwinid(bufnr) or 0)[1]
-    local idx = find_active_index(items, cur)
-    if not idx then return end
-    -- переместим курсор в outline без фокуса
-    pcall(vim.api.nvim_win_set_cursor, st.win, { idx, 0 })
-end
-
--- ===== public API ============================================================
+-- ===== public =====
 function M.open()
     local src = vim.api.nvim_get_current_buf()
     if not is_markdown(src) then
-        vim.notify("mdoutline: not a markdown buffer", vim.log.levels.WARN)
-        return
+        return vim.notify("mdoutline: not a markdown buffer", vim.log.levels.WARN)
     end
     local st = ensure_outline_for(src)
     st.items = parse_outline(src)
     render(src)
-    sync_cursor(src)
 end
 
-function M.close(bufnr)
-    bufnr = bufnr or vim.api.nvim_get_current_buf()
-    local st = states[bufnr]
-    if st and st.win and vim.api.nvim_win_is_valid(st.win) then
-        vim.api.nvim_win_close(st.win, true)
-    end
-    states[bufnr] = nil
+function M.close(src)
+    src = src or vim.api.nvim_get_current_buf()
+    local st = states[src]
+    if st and st.win and vim.api.nvim_win_is_valid(st.win) then pcall(vim.api.nvim_win_close, st.win, true) end
+    states[src] = nil
 end
 
 function M.toggle()
     local src = vim.api.nvim_get_current_buf()
-    local st = states[src]
-    if st and st.win and vim.api.nvim_win_is_valid(st.win) then
-        M.close(src)
-    else
-        M.open()
-    end
+    local st  = states[src]
+    if st and st.win and vim.api.nvim_win_is_valid(st.win) then M.close(src) else M.open() end
 end
 
-function M.refresh(bufnr)
-    bufnr = bufnr or vim.api.nvim_get_current_buf()
-    local st = states[bufnr]
-    if not st then return end
-    st.items = parse_outline(bufnr)
-    render(bufnr)
-    sync_cursor(bufnr)
+function M.refresh(src)
+    src = src or vim.api.nvim_get_current_buf()
+    local st = states[src]; if not st then return end
+    st.items = parse_outline(src)
+    render(src)
 end
 
-function M.jump_at_cursor(src_buf)
-    src_buf = src_buf or vim.api.nvim_get_current_buf()
-    local st = states[src_buf]; if not st then return end
-    local owin = st.win; if not owin or not vim.api.nvim_win_is_valid(owin) then return end
-    local obuf = st.buf
-    local idx = vim.api.nvim_win_get_cursor(owin)[1]
-    local item = st.items[idx]
-    if not item then return end
+function M.jump_at_cursor(src)
+    src = src or vim.api.nvim_get_current_buf()
+    local st = states[src]; if not st then return end
+    if not (st.win and vim.api.nvim_win_is_valid(st.win)) then return end
+    local idx  = vim.api.nvim_win_get_cursor(st.win)[1]
+    local item = st.items[idx]; if not item then return end
 
-    -- перейти в окно с исходным буфером
-    local src_win = vim.fn.bufwinid(src_buf)
-    if src_win == -1 then
-        -- буфер закрыт в окнах? Откроем в текущем
-        vim.api.nvim_set_current_win(owin)
-        vim.cmd("wincmd p")
-        src_win = vim.api.nvim_get_current_win()
-        vim.api.nvim_win_set_buf(src_win, src_buf)
+    -- перейти к исходному буферу (если он не виден — открыть его в текущем окне попапа)
+    local src_win = any_win_for_buf(src)
+    if not src_win then
+        -- заменим попап текущим окном на исходный буфер
+        vim.api.nvim_win_set_buf(st.win, src)
+        src_win = st.win
     end
     vim.api.nvim_set_current_win(src_win)
     vim.api.nvim_win_set_cursor(src_win, { item.lnum, 0 })
-end
-
--- автосинхронизация/обновления
-local function schedule(src)
-    local st = states[src]
-    if not st then return end
-    if st.throttle then
-        st.throttle:stop(); st.throttle = nil
-    end
-    st.throttle = vim.defer_fn(function()
-        if states[src] then M.refresh(src) end
-    end, opts.throttle_ms)
-end
-
-function M.attach_autocmds(src)
-    if not opts.auto_update then return end
-    local grp = vim.api.nvim_create_augroup("MdOutline:" .. src, { clear = true })
-    vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI", "BufWritePost" }, {
-        group = grp, buffer = src, callback = function() schedule(src) end,
-    })
-    vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
-        group = grp, buffer = src, callback = function() sync_cursor(src) end,
-    })
-
-    local ggrp = vim.api.nvim_create_augroup("MdOutline:global", { clear = true })
-    vim.api.nvim_create_autocmd({ "BufEnter", "BufWinLeave", "BufDelete", "BufWipeout", "BufUnload" }, {
-        group = ggrp,
-        callback = function()
-            for src, st in pairs(states) do
-                -- если исходный буфер недействителен или не виден ни в одном окне — закрываем outline
-                if (not vim.api.nvim_buf_is_valid(src)) or (#vim.fn.win_findbuf(src) == 0) then
-                    M.close(src)
-                end
-            end
-        end,
-    })
+    -- Можно закрыть попап после прыжка:
+    M.close(src)
 end
 
 function M.setup(user)
-    opts = vim.tbl_deep_extend("force", opts, user or {})
-    -- простая команда для ручного запуска
-    vim.api.nvim_create_user_command("MdOutlineToggle", function()
-        local src = vim.api.nvim_get_current_buf()
-        if not states[src] then
-            M.open()
-            M.attach_autocmds(src)
-        else
-            M.toggle()
-        end
-    end, {})
-
-    vim.api.nvim_create_user_command("MdOutlineOpen", function()
-        local src = vim.api.nvim_get_current_buf()
-        M.open()
-        M.attach_autocmds(src)
-    end, {})
-
-    vim.api.nvim_create_user_command("MdOutlineClose", function()
-        M.close()
-    end, {})
+    if user then opts = vim.tbl_deep_extend("force", opts, user) end
+    vim.api.nvim_create_user_command("MdOutlineOpen", function() M.open() end, {})
+    vim.api.nvim_create_user_command("MdOutlineClose", function() M.close() end, {})
+    vim.api.nvim_create_user_command("MdOutlineToggle", function() M.toggle() end, {})
 end
 
 return M
