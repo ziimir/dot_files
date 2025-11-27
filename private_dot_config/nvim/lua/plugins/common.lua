@@ -79,22 +79,15 @@ return {
             local version = vim.version()
             local nvim_version = string.format("🧪 Neovim v%d.%d.%d", version.major, version.minor, version.patch)
 
-            local lines = {}
-            for line in io.lines(os.getenv("HOME") .. "/.vim_dashboard") do
-                table.insert(lines, line)
-            end
-
             dashboard.section.header.val = {
                 date,
                 time,
                 nvim_version,
             }
             dashboard.section.buttons.val = {
-                dashboard.button("d", "Dir", ":Oil .<CR>"),
-                dashboard.button("f", "Files", ":Files<CR>"),
                 dashboard.button("e", "New file", ":ene<CR>"),
             }
-            dashboard.section.footer.val = lines
+            dashboard.section.footer.val = {}
             dashboard.opts.opts.noautocmd = true
 
             require("alpha").setup(dashboard.opts)

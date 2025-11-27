@@ -1,0 +1,33 @@
+set shell sh
+set shellopts '-eu'
+set ifs "\n"
+set hidden true
+
+map . set hidden!
+
+map e $$EDITOR $f
+
+# --- создание ---
+cmd mkfile $touch $*
+map n push :mkfile<space>
+
+cmd mkdir $mkdir -p $*
+map N push :mkdir<space>
+
+# --- удаление ---
+map D delete
+
+# --- fzf поиск ---
+cmd fzf_jump ${{
+    res="$(find . -maxdepth 10 -type d | fzf --header="Jump to location")"
+    if [ -n "$res" ]; then
+        if [ -d "$res" ]; then
+            cmd="cd"
+        else
+            cmd="select"
+        fi
+        res="$(printf '%s' "$res" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+        lf -remote "send $id $cmd \"$res\""
+    fi
+}}
+map f :fzf_jump

@@ -9,6 +9,19 @@ setopt MENU_COMPLETE        # Automatically highlight first element of completio
 setopt AUTO_LIST            # Automatically list choices on ambiguous completion.
 setopt COMPLETE_IN_WORD     # Complete from both ends of a word.
 
+# command history
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=100000        # сколько команд держать в памяти
+SAVEHIST=100000        # сколько команд писать в файл
+
+setopt APPEND_HISTORY        # не перезаписывать файл, а дописывать
+setopt INC_APPEND_HISTORY    # писать в файл по мере ввода, а не только при выходе
+setopt SHARE_HISTORY         # шарить историю между сессиями
+
+setopt HIST_IGNORE_DUPS      # не добавлять подряд одинаковые команды
+setopt HIST_IGNORE_ALL_DUPS  # убирать более старые дубли
+setopt HIST_REDUCE_BLANKS    # чистить лишние пробелы
+
 # colors in completion
 [[ -z "$LS_COLORS" ]] || zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
@@ -65,12 +78,13 @@ autoload -U colors && colors
 # prompt config
 #  - e0b6  - e0d6  - e0ba
 #  - e0bc  - e0a0 󰇥 - f01e5
-PROMPT='$(prompt_yazi)%{$fg[yellow]$fg[white]$bg[yellow]%}%n%{$bg[cyan]$fg[yellow]%}%{$bg[cyan]$fg[white]%}%c%{$reset_color%}$(check_git_repo)$(prompt_end)'
+PROMPT='$(hostname)%{$fg[yellow]$fg[white]$bg[yellow]%}%n%{$bg[cyan]$fg[yellow]%}%{$bg[cyan]$fg[white]%}%c%{$reset_color%}$(check_git_repo)$(prompt_end)'
 RPROMPT=''
 
-function prompt_yazi() {
-  if [ -n "$YAZI_LEVEL" ]; then
-    echo "%{$fg[red]$bg[red]$fg[white]%} 󰇥 %{$reset_color$fg[red]$reset_color%} "
+function hostname() {
+  local print_hostname=''
+  if [ -n "$print_hostname" ]; then
+    echo "%{$fg[red]$bg[red]$fg[white]%} %m %{$reset_color$fg[red]$reset_color%} "
   fi
 }
 
@@ -86,13 +100,17 @@ function prompt_end() {
   echo "%{$reset_color%}"$'\n'"$ "
 }
 
-function yy() {
-    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
-    yazi "$@" --cwd-file="$tmp"
-    if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-        builtin cd -- "$cwd"
-    fi
-    rm -f -- "$tmp"
+lfcd() {
+  local tmp="$(mktemp)"
+  lf -last-dir-path="$tmp" "$@"
+  if [ -f "$tmp" ]; then
+    local dir
+    dir="$(cat "$tmp")"
+    rm -f "$tmp"
+    [ -d "$dir" ] && cd "$dir"
+  fi
 }
+
+alias ll="lfcd"
 
 alias pr="cd $HOME/Projects"
