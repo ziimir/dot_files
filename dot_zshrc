@@ -9,10 +9,15 @@ setopt MENU_COMPLETE        # Automatically highlight first element of completio
 setopt AUTO_LIST            # Automatically list choices on ambiguous completion.
 setopt COMPLETE_IN_WORD     # Complete from both ends of a word.
 
+# без PROMPT_SUBST
+# понимает только свои %-последовательности — %n, %~, %F{red}, %m и т.п.;
+# строка вида $(prompt_prefix) воспринимается просто как буквальный текст и печатается как $(prompt_prefix).
+setopt PROMPT_SUBST
+
 # command history
 HISTFILE="$HOME/.zsh_history"
-HISTSIZE=100000        # сколько команд держать в памяти
-SAVEHIST=100000        # сколько команд писать в файл
+HISTSIZE=10000        # сколько команд держать в памяти
+SAVEHIST=10000        # сколько команд писать в файл
 
 setopt APPEND_HISTORY        # не перезаписывать файл, а дописывать
 setopt INC_APPEND_HISTORY    # писать в файл по мере ввода, а не только при выходе
@@ -64,40 +69,48 @@ export EDITOR="nvim"
 export VISUAL="nvim"
 alias vim="nvim"
 
-setopt PROMPT_SUBST
 export GIT_PS1_SHOWDIRTYSTATE=1
 export GIT_PS1_SHOWSTASHSTATE=1
 export GIT_PS1_SHOWUNTRACKEDFILES=1
 
 # PATH
-export PATH=$PATH:~/.local/bin
+export PATH="$HOME/.local/bin:$PATH"
 
 # colors in prompt
 autoload -U colors && colors
 
 # prompt config
 #  - e0b6  - e0d6  - e0ba
-#  - e0bc  - e0a0 󰇥 - f01e5
-PROMPT='$(hostname)%{$fg[yellow]$fg[white]$bg[yellow]%}%n%{$bg[cyan]$fg[yellow]%}%{$bg[cyan]$fg[white]%}%c%{$reset_color%}$(check_git_repo)$(prompt_end)'
+#  - e0bc  - e0a0
+# %f - сброс foreground, %F{color} - цвет foreground
+# %K - сброс background, %K{color} - цвет background
+PROMPT='$(prompt_prefix)%F{yellow}%F{white}%K{yellow}%n%K{cyan}%F{yellow}%K{cyan}%F{white}%c%f%k$(check_git_repo)'$'\n''$ '
 RPROMPT=''
 
-function hostname() {
-  local print_hostname=''
-  if [ -n "$print_hostname" ]; then
-    echo "%{$fg[red]$bg[red]$fg[white]%} %m %{$reset_color$fg[red]$reset_color%} "
+prompt_prefix() {
+  local parts=()
+
+  local print_hostname='yes'
+  if [[ -n "$SSH_CONNECTION" ]]; then
+    parts+=('%F{red}%K{red}%F{white} %m %k%F{red}%f')
   fi
+
+  if [[ -n "$LF_LEVEL" ]]; then
+    parts+=('%F{red}%K{red}%F{white} [LF] %k%F{red}%f')
+  fi
+
+  # если parts пустой — ничего не выводим
+  (( ${#parts[@]} )) || return
+
+  echo -n "${(j: :)parts} "
 }
 
 function check_git_repo() {
   if [ -z $(git rev-parse --git-dir 2> /dev/null) ]; then
-    echo "%{$reset_color$fg[cyan]$reset_color%}"
+    echo "%f%k%F{cyan}%f%k"
   else
-    echo "%{$fg[cyan]$bg[red]$fg[white]$bg[red] $(__git_ps1 ' %s ')$reset_color$fg[red]$reset_color%}"
+    echo "%F{cyan}%K{red}%F{white}%K{red} $(__git_ps1 ' %s ')%f%k%F{red}%f%k"
   fi
-}
-
-function prompt_end() {
-  echo "%{$reset_color%}"$'\n'"$ "
 }
 
 lfcd() {
@@ -113,4 +126,4 @@ lfcd() {
 
 alias ll="lfcd"
 
-alias pr="cd $HOME/Projects"
+alias pr="ll $HOME/Projects"
