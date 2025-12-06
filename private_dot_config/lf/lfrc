@@ -13,8 +13,8 @@ map e $$EDITOR $f
 map i $nvim -c Oil
 
 # --- создание ---
-cmd mkfile $touch $*
-map n push :mkfile<space>
+cmd touch $touch $*
+map n push :touch<space>
 
 cmd mkdir $mkdir -p $*
 map N push :mkdir<space>
@@ -30,6 +30,9 @@ cmd open ${{
   mime="$(file --mime-type -Lb "$f")"
   case "$mime" in
     text/*|application/json|application/x-shellscript)
+      ${EDITOR} "$f"
+      ;;
+    inode/x-empty)
       ${EDITOR} "$f"
       ;;
     *)
@@ -48,6 +51,9 @@ cmd open_ext ${{
   mime="$(file --mime-type -Lb "$f")"
   case "$mime" in
     text/*|application/json|application/x-shellscript)
+      ${EDITOR} "$f"
+      ;;
+    inode/x-empty)
       ${EDITOR} "$f"
       ;;
     *)
