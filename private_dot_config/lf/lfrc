@@ -66,15 +66,26 @@ map o open_ext
 
 # --- fzf поиск ---
 cmd fzf_jump ${{
-    res="$(find . -maxdepth 1 | fzf --header="Jump to location")"
-    if [ -n "$res" ]; then
-        if [ -d "$res" ]; then
-            cmd="cd"
-        else
-            cmd="select"
-        fi
-        res="$(printf '%s' "$res" | sed 's/\\/\\\\/g;s/"/\\"/g')"
-        lf -remote "send $id $cmd \"$res\""
+  res="$(find . -maxdepth 1 | fzf --header="Jump to location")"
+  if [ -n "$res" ]; then
+    if [ -d "$res" ]; then
+      cmd="cd"
+    else
+      cmd="select"
     fi
+      res="$(printf '%s' "$res" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+      lf -remote "send $id $cmd \"$res\""
+  fi
 }}
 map / :fzf_jump
+
+# --- утилзы ---
+cmd rsync_forge ${{
+  if [ -n "$fs" ]; then
+    # есть выделенные файлы — шлём их
+    ~/.local/bin/rsync-forge.sh forge /srv $fs
+  else
+    # ничего не выделено — шлём файл под курсором
+    ~/.local/bin/rsync-forge.sh forge /srv "$f"
+  fi
+}}
