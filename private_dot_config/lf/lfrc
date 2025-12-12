@@ -1,6 +1,7 @@
-set shell sh
-set shellopts '-eu'
+set shell zsh
+set shellopts '-euy'
 set ifs "\n"
+set filesep "\n"
 set hidden true
 
 set preview true
@@ -8,7 +9,10 @@ set previewer ~/.config/lf/scripts/previewer.sh
 
 map . set hidden!
 
-# Warn about nested instances
+# quit without changing directories when using lfcd
+map Q %lf -remote "send $id :cd \"$lf_user_OLDPWD\"; quit"
+
+# warn about nested instances
 &[ "$LF_LEVEL" -eq 1 ] || lf -remote "send $id echoerr \"Warning: You're in a nested lf instance!\""
 
 map e $$EDITOR $f
@@ -81,6 +85,20 @@ cmd fzf_jump ${{
   fi
 }}
 map / :fzf_jump
+
+cmd fzf_global_jump ${{
+    res="$(fzf 2>/dev/tty)"
+    if [ -n "$res" ]; then
+        if [ -d "$res" ]; then
+            cmd="cd"
+        else
+            cmd="select"
+        fi
+        res="$(printf '%s' "$res" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+        lf -remote "send $id $cmd \"$res\""
+    fi
+}}
+map go :fzf_global_jump
 
 # --- утилзы ---
 cmd rsync_forge ${{

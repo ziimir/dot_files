@@ -114,13 +114,19 @@ function check_git_repo() {
 }
 
 lfcd() {
-  local tmp="$(mktemp)"
-  lf -last-dir-path="$tmp" "$@"
+  local oldpwd="$PWD"
+  local tmp
+  tmp="$(mktemp)"
+
+  command lf -command "set user_OLDPWD '$oldpwd'" -last-dir-path="$tmp" "$@"
+
   if [ -f "$tmp" ]; then
     local dir
     dir="$(cat "$tmp")"
     rm -f "$tmp"
-    [ -d "$dir" ] && cd "$dir"
+    if [ -n "$dir" ]; then
+      cd "$dir"
+    fi
   fi
 }
 

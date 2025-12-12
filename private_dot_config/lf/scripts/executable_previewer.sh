@@ -20,6 +20,9 @@ case "$mime" in
       -- "$file"
     exit 1
     ;;
+  application/x-tar|application/zip|application/gzip|application/x-7z-compressed|application/x-xz|application/x-lzma|application/x-bzip|application/x-bzip2|application/x-bzip3|application/x-lz4|application/x-snappy|application/x-snappy-framed|application/zstd|application/x-zstd|application/vnd.rar|application/x-rar|application/x-rar-compressed|application/x-brotli|application/brotli*)
+    ouch list --tree -- "$file"
+    ;;
   *)
     cat -- "$file"
     ;;
