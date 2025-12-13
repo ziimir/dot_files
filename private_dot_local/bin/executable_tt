@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# имена и директории для сессий
+SESSION1="home"
+DIR1="$HOME"
+
+SESSION2="downloads"
+DIR2="$HOME"/downloads
+
+# если сессии ещё нет — создаём, сразу с нужным pwd
+if ! tmux has-session -t "$SESSION1" 2>/dev/null; then
+  TMUX='' tmux new-session -d -s "$SESSION1" -c "$DIR1"
+fi
+
+if ! tmux has-session -t "$SESSION2" 2>/dev/null; then
+  tmux new-session -d -s "$SESSION2" -c "$DIR2"
+fi
+
+# если мы уже внутри tmux — просто переключаемся на первую
+if [ -n "$TMUX" ]; then
+  tmux switch-client -t "$SESSION2"
+else
+  # если вне tmux — прикрепляемся к первой
+  tmux attach-session -t "$SESSION2"
+fi
