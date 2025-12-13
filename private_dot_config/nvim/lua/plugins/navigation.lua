@@ -104,6 +104,29 @@ return {
                     desc = "open_preview",
                     mode = "n",
                 },
+                ["/"] = false,
+                ["/"] = function()
+                    local oil = require('oil')
+                    local path = oil.get_current_dir(0)
+
+                    if not path then
+                        return
+                    end
+
+                    local escaped_path = vim.fn.shellescape(path)
+                    local cmd = "find " .. escaped_path ..
+                        " -maxdepth 1 -exec ls -dF {} \\;" .. " | sed 's|^" .. path:gsub("/$", "") .. "/||'"
+
+                    return vim.fn['fzf#run'](
+                        vim.fn['fzf#wrap']({
+                            source = cmd,
+                            sink = function(item)
+                                local full_path = vim.fs.joinpath(path, item)
+                                oil.open(full_path)
+                            end
+                        })
+                    )
+                end,
             },
             view_options = { show_hidden = true },
         },

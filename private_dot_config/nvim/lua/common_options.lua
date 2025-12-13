@@ -67,7 +67,7 @@ vim.api.nvim_create_user_command(
 
 vim.keymap.set(
     "n",
-    "<Leader>r",
+    "<Leader>/",
     function()
         local word = vim.fn.expand("<cword>");
 
@@ -81,7 +81,7 @@ vim.keymap.set(
 
 vim.keymap.set(
     "v",
-    "<Leader>r",
+    "<Leader>/",
     function()
         local cmd = "s///gc"
         local left = vim.api.nvim_replace_termcodes("<Left>", true, false, true)
