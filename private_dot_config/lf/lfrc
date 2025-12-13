@@ -98,7 +98,7 @@ cmd fzf_global_jump ${{
         lf -remote "send $id $cmd \"$res\""
     fi
 }}
-map go :fzf_global_jump
+map F :fzf_global_jump
 
 # --- утилзы ---
 cmd rsync_forge ${{
