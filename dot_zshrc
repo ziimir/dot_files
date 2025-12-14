@@ -99,6 +99,10 @@ prompt_prefix() {
     parts+=('%F{red}%K{red}%F{white} [LF] %k%F{red}%f')
   fi
 
+  if [[ -n "$CHEZMOI" ]]; then
+    parts+=('%F{red}%K{red}%F{white} [chezmoi] %k%F{red}%f')
+  fi
+
   # если parts пустой — ничего не выводим
   (( ${#parts[@]} )) || return
 
