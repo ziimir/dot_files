@@ -120,9 +120,28 @@ return {
                     return vim.fn['fzf#run'](
                         vim.fn['fzf#wrap']({
                             source = cmd,
-                            sink = function(item)
+                            options = { "--expect=ctrl-t" },
+                            ['sink*'] = function(lines)
+                                if not lines or #lines < 2 then
+                                    return
+                                end
+
+                                local key  = lines[1] -- "ctrl-t" или "" (если Enter)
+                                local item = lines[2]
+
+                                if not item or item == '' then
+                                    return
+                                end
+
                                 local full_path = vim.fs.joinpath(path, item)
-                                oil.open(full_path)
+
+                                if key == 'ctrl-t' then
+                                    oil.close()
+                                    vim.cmd('tabnew')
+                                    oil.open(full_path)
+                                else
+                                    oil.open(full_path)
+                                end
                             end
                         })
                     )
