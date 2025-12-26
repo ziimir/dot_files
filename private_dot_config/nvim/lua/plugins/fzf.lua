@@ -32,6 +32,7 @@ return {
             -- fzf by default use bat if it is available, setting up light theme here
             vim.env.BAT_THEME = 'GitHub'
 
+            vim.api.nvim_set_keymap('n', '<Leader>/', ':BLines<CR>', { noremap = true })
             vim.api.nvim_set_keymap('n', '<Leader>rr', ':History:<CR>', { noremap = true })
             vim.api.nvim_set_keymap('n', '<Leader>st', ':call fzf#sonictemplate#run()<CR>', { noremap = true })
             vim.api.nvim_set_keymap('n', '<Leader>ff', ':Files<CR>', { noremap = true })

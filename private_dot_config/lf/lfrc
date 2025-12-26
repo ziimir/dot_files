@@ -17,7 +17,7 @@ map Q %lf -remote "send $id :cd \"$lf_user_OLDPWD\"; quit"
 
 map e $$EDITOR $f
 
-map i $nvim -c Oil
+map I $nvim -c Oil
 
 # --- создание ---
 cmd touch $touch $*
@@ -30,7 +30,14 @@ map N push :mkdir<space>
 map D delete
 
 # --- вставка ---
-map p : paste; clear
+map p : paste; clear; unselect
+
+# --- очистить выбранные файлы ---
+map c : clear; unselect
+
+# --- visual mode ---
+map v visual
+vmap v visual-accept
 
 # --- открытие ---
 cmd open ${{
@@ -50,14 +57,13 @@ cmd open ${{
       ;;
   esac
 }}
-
 map <enter> open
 map l open
 
 cmd open_ext ${{
   mime="$(file --mime-type -Lb "$f")"
   case "$mime" in
-    text/*|application/json|application/x-shellscript)
+    text/*|application/json)
       ${EDITOR} "$f"
       ;;
     inode/x-empty)
@@ -68,8 +74,19 @@ cmd open_ext ${{
       ;;
   esac
 }}
-
 map o open_ext
+
+# --- инфорамция о файле/директории ---
+cmd print_info ${{
+  if [ -n "$fs" ]; then
+    # есть выделенные файлы — смотрим размер
+    du -ch $fs | less
+  else
+    # ничего не выделено — шлём файл под курсором
+    ~/.local/bin/fileinfo.sh "$f" | less
+  fi
+}}
+map i print_info
 
 # --- fzf поиск ---
 cmd fzf_jump ${{
