@@ -9,11 +9,6 @@ setopt MENU_COMPLETE        # Automatically highlight first element of completio
 setopt AUTO_LIST            # Automatically list choices on ambiguous completion.
 setopt COMPLETE_IN_WORD     # Complete from both ends of a word.
 
-# без PROMPT_SUBST
-# понимает только свои %-последовательности — %n, %~, %F{red}, %m и т.п.;
-# строка вида $(prompt_prefix) воспринимается просто как буквальный текст и печатается как $(prompt_prefix).
-setopt PROMPT_SUBST
-
 # command history
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=10000        # сколько команд держать в памяти
@@ -32,8 +27,6 @@ setopt HIST_REDUCE_BLANKS    # чистить лишние пробелы
 
 # use emacs key bindings
 bindkey -e
-
-# User configuration
 
 # homebrew fix on apple silicon mac
 eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -69,54 +62,22 @@ export EDITOR="nvim"
 export VISUAL="nvim"
 alias vim="nvim"
 
-export GIT_PS1_SHOWDIRTYSTATE=1
-export GIT_PS1_SHOWSTASHSTATE=1
-export GIT_PS1_SHOWUNTRACKEDFILES=1
-
 # PATH
 export PATH="$HOME/.local/bin:$PATH"
+
+# PROMPT CONFIG
+
+# без PROMPT_SUBST
+# понимает только свои %-последовательности — %n, %~, %F{red}, %m и т.п.;
+# строка вида $(prompt_prefix) воспринимается просто как буквальный текст и печатается как $(prompt_prefix).
+setopt PROMPT_SUBST
 
 # colors in prompt
 autoload -U colors && colors
 
-# prompt config
-#  - e0b6  - e0d6  - e0ba
-#  - e0bc  - e0a0
-# %f - сброс foreground, %F{color} - цвет foreground
-# %K - сброс background, %K{color} - цвет background
-PROMPT='$(prompt_prefix)%F{yellow}%F{white}%K{yellow}%n%K{cyan}%F{yellow}%K{cyan}%F{white}%c%f%k$(check_git_repo)'$'\n''$ '
-RPROMPT=''
+[ -f ~/.config/zsh/prompt/prompt.zsh ] && source ~/.config/zsh/prompt/prompt.zsh
 
-prompt_prefix() {
-  local parts=()
-
-  local print_hostname='yes'
-  if [[ -n "$SSH_CONNECTION" ]]; then
-    parts+=('%F{red}%K{red}%F{white} %m %k%F{red}%f')
-  fi
-
-  if [[ -n "$LF_LEVEL" ]]; then
-    parts+=('%F{red}%K{red}%F{white} [LF] %k%F{red}%f')
-  fi
-
-  if [[ -n "$CHEZMOI" ]]; then
-    parts+=('%F{red}%K{red}%F{white} [chezmoi] %k%F{red}%f')
-  fi
-
-  # если parts пустой — ничего не выводим
-  (( ${#parts[@]} )) || return
-
-  echo -n "${(j: :)parts} "
-}
-
-function check_git_repo() {
-  if [ -z $(git rev-parse --git-dir 2> /dev/null) ]; then
-    echo "%f%k%F{cyan}%f%k"
-  else
-    echo "%F{cyan}%K{red}%F{white}%K{red} $(__git_ps1 ' %s ')%f%k%F{red}%f%k"
-  fi
-}
-
+# terminal file manager
 lfcd() {
   local oldpwd="$PWD"
   local tmp
