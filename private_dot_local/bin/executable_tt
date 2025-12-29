@@ -1,25 +1,51 @@
 #!/usr/bin/env bash
 
 # имена и директории для сессий
-SESSION1="home"
-DIR1="$HOME"
+SESSION_HOME="home"
+DIR_HOME="$HOME"
 
-SESSION2="downloads"
-DIR2="$HOME"/downloads
+SESSION_DOWNLOADS="downloads"
+DIR_DOWNLOADS="$HOME"/Downloads
+
+SESSION_AI="ai"
+DIR_AI="$HOME"/Projects/ai
 
 # если сессии ещё нет — создаём, сразу с нужным pwd
-if ! tmux has-session -t "$SESSION1" 2>/dev/null; then
-  TMUX='' tmux new-session -d -s "$SESSION1" -c "$DIR1"
+if ! tmux has-session -t "$SESSION_HOME" 2>/dev/null; then
+  TMUX='' tmux new-session -d -s "$SESSION_HOME" -c "$DIR_HOME"
 fi
 
-if ! tmux has-session -t "$SESSION2" 2>/dev/null; then
-  tmux new-session -d -s "$SESSION2" -c "$DIR2"
+if ! tmux has-session -t "$SESSION_DOWNLOADS" 2>/dev/null; then
+  tmux new-session -d -s "$SESSION_DOWNLOADS" -c "$DIR_DOWNLOADS"
 fi
+
+if ! tmux has-session -t "$SESSION_AI" 2>/dev/null; then
+  tmux new-session -d -s "$SESSION_AI" -c "$DIR_AI"
+fi
+
+default_session_param="${1:-h}"
+
+case "$default_session_param" in
+  h)
+    session="$SESSION_HOME"
+    ;;
+  d)
+    session="$SESSION_DOWNLOADS"
+    ;;
+  ai)
+    session="$SESSION_AI"
+    ;;
+  *)
+    echo "unknown mode: $default_session_param" >&2
+    echo "allowed: h, d, ai" >&2
+    exit 2
+    ;;
+esac
 
 # если мы уже внутри tmux — просто переключаемся на первую
 if [ -n "$TMUX" ]; then
-  tmux switch-client -t "$SESSION2"
+  tmux switch-client -t "$session"
 else
   # если вне tmux — прикрепляемся к первой
-  tmux attach-session -t "$SESSION2"
+  tmux attach-session -t "$session"
 fi
