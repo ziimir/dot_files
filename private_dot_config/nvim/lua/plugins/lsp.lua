@@ -18,6 +18,7 @@ return {
                 "rust_analyzer",
                 "clangd",
                 "cssls", "stylelint_lsp",
+                "pylsp",
                 "cspell_ls",
             },
         },

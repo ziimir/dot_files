@@ -21,6 +21,7 @@ return {
                     "c",
                     "cpp",
                     "rust",
+                    "python",
                 },
                 highlight = { enable = true },
                 indent = { enable = true },
