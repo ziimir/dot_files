@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# имена и директории для сессий
+working_dir=$(ls "$HOME/Projects" | fzf)
+
+SESSION_WIP="$working_dir"
+DIR_WIP="$HOME/Projects/$working_dir"
+
+if ! tmux has-session -t "$SESSION_WIP" 2>/dev/null; then
+  tmux new-session -d -s "$SESSION_WIP" -c "$DIR_WIP"
+fi
+
+# если мы уже внутри tmux — просто переключаемся на первую
+if [ -n "$TMUX" ]; then
+  tmux switch-client -t "$SESSION_WIP"
+else
+  # если вне tmux — прикрепляемся к первой
+  tmux attach-session -t "$SESSION_WIP"
+fi

@@ -7,9 +7,6 @@ DIR_HOME="$HOME"
 SESSION_DOWNLOADS="downloads"
 DIR_DOWNLOADS="$HOME/Downloads"
 
-SESSION_WIP="wip"
-DIR_WIP="$HOME/Projects/scriptor"
-
 # если сессии ещё нет — создаём, сразу с нужным pwd
 if ! tmux has-session -t "$SESSION_HOME" 2>/dev/null; then
   TMUX='' tmux new-session -d -s "$SESSION_HOME" -c "$DIR_HOME"
@@ -17,10 +14,6 @@ fi
 
 if ! tmux has-session -t "$SESSION_DOWNLOADS" 2>/dev/null; then
   tmux new-session -d -s "$SESSION_DOWNLOADS" -c "$DIR_DOWNLOADS"
-fi
-
-if ! tmux has-session -t "$SESSION_WIP" 2>/dev/null; then
-  tmux new-session -d -s "$SESSION_WIP" -c "$DIR_WIP"
 fi
 
 default_session_param="${1:-h}"
@@ -32,12 +25,9 @@ case "$default_session_param" in
   d)
     session="$SESSION_DOWNLOADS"
     ;;
-  w)
-    session="$SESSION_WIP"
-    ;;
   *)
     echo "unknown mode: $default_session_param" >&2
-    echo "allowed: h, d, w" >&2
+    echo "allowed: h, d" >&2
     exit 2
     ;;
 esac
