@@ -5,10 +5,10 @@ SESSION_HOME="home"
 DIR_HOME="$HOME"
 
 SESSION_DOWNLOADS="downloads"
-DIR_DOWNLOADS="$HOME"/Downloads
+DIR_DOWNLOADS="$HOME/Downloads"
 
-SESSION_AI="ai"
-DIR_AI="$HOME"/Projects/ai
+SESSION_WIP="wip"
+DIR_WIP="$HOME/Projects/scriptor"
 
 # если сессии ещё нет — создаём, сразу с нужным pwd
 if ! tmux has-session -t "$SESSION_HOME" 2>/dev/null; then
@@ -19,8 +19,8 @@ if ! tmux has-session -t "$SESSION_DOWNLOADS" 2>/dev/null; then
   tmux new-session -d -s "$SESSION_DOWNLOADS" -c "$DIR_DOWNLOADS"
 fi
 
-if ! tmux has-session -t "$SESSION_AI" 2>/dev/null; then
-  tmux new-session -d -s "$SESSION_AI" -c "$DIR_AI"
+if ! tmux has-session -t "$SESSION_WIP" 2>/dev/null; then
+  tmux new-session -d -s "$SESSION_WIP" -c "$DIR_WIP"
 fi
 
 default_session_param="${1:-h}"
@@ -32,12 +32,12 @@ case "$default_session_param" in
   d)
     session="$SESSION_DOWNLOADS"
     ;;
-  ai)
-    session="$SESSION_AI"
+  w)
+    session="$SESSION_WIP"
     ;;
   *)
     echo "unknown mode: $default_session_param" >&2
-    echo "allowed: h, d, ai" >&2
+    echo "allowed: h, d, w" >&2
     exit 2
     ;;
 esac
