@@ -6,7 +6,8 @@ working_dir=$(ls "$HOME/Projects" | fzf)
 SESSION_WIP="$working_dir"
 DIR_WIP="$HOME/Projects/$working_dir"
 
-if ! tmux has-session -t "$SESSION_WIP" 2>/dev/null; then
+# -t session_name - ищет по префиксу, поэтому используем -t =session_name
+if ! tmux has-session -t "=$SESSION_WIP" 2>/dev/null; then
   tmux new-session -d -s "$SESSION_WIP" -c "$DIR_WIP"
 fi
 
