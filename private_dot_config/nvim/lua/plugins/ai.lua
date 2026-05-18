@@ -1,61 +1,68 @@
 return {
-    --{
-    --"ravitemer/mcphub.nvim",
-    --enabled = false,
-    --dependencies = {
-    --"nvim-lua/plenary.nvim",
-    --},
-    --build = "npm install -g mcp-hub@latest",
-    --config = function()
-    --require("mcphub").setup()
-    --end
-    --},
-    {
-        "olimorris/codecompanion.nvim",
-        enabled = true,
-        version = "^18.0.0",
-        dependencies = {
-            "nvim-lua/plenary.nvim",
-            "nvim-treesitter/nvim-treesitter",
-        },
-        opts = {
+    "nickjvandyke/opencode.nvim",
+    version = "*", -- Latest stable release
+    dependencies = {
+        {
+            -- `snacks.nvim` integration is recommended, but optional
+            ---@module "snacks" <- Loads `snacks.nvim` types for configuration intellisense
+            "folke/snacks.nvim",
+            optional = true,
             opts = {
-                language = "Russian",
-            },
-            adapters = {
-                http = {
-                    openai = function()
-                        return require("codecompanion.adapters").extend("openai", {
-                            env = {
-                                api_key = "cmd:cat ~/.gpt_key | tr -d '\n'",
+                input = {}, -- Enhances `ask()`
+                picker = {  -- Enhances `select()`
+                    actions = {
+                        opencode_send = function(...) return require("opencode").snacks_picker_send(...) end,
+                    },
+                    win = {
+                        input = {
+                            keys = {
+                                ["<a-a>"] = { "opencode_send", mode = { "n", "i" } },
                             },
-                        })
-                    end,
-                    vllm = function()
-                        return require("codecompanion.adapters").extend("openai", {
-                            url = "http://192.168.0.253:8000/v1/chat/completions",
-                            env = {
-                                api_key = "localtoken",
-                            },
-                            schema = {
-                                model = {
-                                    default = "Qwen/Qwen2.5-Coder-7B-Instruct-AWQ",
-                                },
-                            },
-                        })
-                    end,
-                }
-            },
-            interactions = {
-                chat = { adapter = "openai" },
-                inline = { adapter = "vllm" },
-                cmd = { adapter = "vllm" },
-                background = { adapter = "vllm" }
+                        },
+                    },
+                },
             },
         },
-        init = function()
-            vim.keymap.set('n', '<space>aa', ':CodeCompanionChat<CR>')
-            vim.keymap.set('n', '<space>ai', ':CodeCompanion ')
-        end
     },
+    config = function()
+        ---@type opencode.Opts
+        vim.g.opencode_opts = {
+            -- Your configuration, if any; goto definition on the type or field for details
+        }
+
+        vim.o.autoread = true -- Required for `opts.events.reload`
+
+        -- Recommended/example keymaps
+        vim.keymap.set(
+            { "n", "x" },
+            "<M-a>",
+            function() require("opencode").ask("@this: ", { submit = true }) end,
+            { desc = "Ask opencode…" }
+        )
+        vim.keymap.set(
+            { "n", "x" },
+            "<M-x>",
+            function() require("opencode").select() end,
+            { desc = "Select opencode…" }
+        )
+        vim.keymap.set(
+            { "n", "t" },
+            "<M-t>",
+            function() require("opencode").toggle() end,
+            { desc = "Toggle opencode" }
+        )
+
+        vim.keymap.set(
+            "n",
+            "<M-u>",
+            function() require("opencode").command("session.half.page.up") end,
+            { desc = "Scroll opencode up" }
+        )
+        vim.keymap.set(
+            "n",
+            "<M-d>",
+            function() require("opencode").command("session.half.page.down") end,
+            { desc = "Scroll opencode down" }
+        )
+    end,
 }

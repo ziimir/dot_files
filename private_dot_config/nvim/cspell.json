@@ -1,6 +1,16 @@
 {
   "version": "0.2",
   "language": "en,ru",
-  "import": ["~/.local/share/nvim/cspell/node_modules/@cspell/dict-ru_ru/cspell-ext.json"],
-  "words": ["quickfix", "fantlab"]
+  "import": [
+    "~/.local/share/nvim/cspell/node_modules/@cspell/dict-ru_ru/cspell-ext.json"
+  ],
+  "words": [
+    "quickfix",
+    "fantlab"
+  ],
+  "userWords": [
+    "Scriptor",
+    "rspack",
+    "autorun"
+  ]
 }

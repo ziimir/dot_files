@@ -100,30 +100,25 @@ return {
             "rcarriga/nvim-notify",
         },
         event = "VeryLazy",
-        opts = {
-            cmdline = { enabled = false },
-            messages = { enabled = false },
-            lsp = {
-                hover = { enabled = true },
-                signature = { enabled = true },
-                progress = { enabled = true },
-                message = { enabled = true },
-            },
-            presets = { lsp_doc_border = true },
-            views = {
-                hover  = {
-                    border = { style = "single" },
-                    win_options = { winblend = 0 },
-                },
-                popup  = {
-                    border = { style = "single" },
-                    win_options = { winblend = 0 },
-                },
-                notify = {
-                    border = { style = "single" },
-                    win_options = { winblend = 0 },
-                },
+        opts = function()
+            local view_settings = {
+                border = { style = "single" },
+                win_options = { winblend = 0 },
             }
-        },
-    }
+
+            return {
+                cmdline = { enabled = false },
+                messages = { enabled = false },
+                presets = {
+                    long_message_to_split = true,
+                    lsp_doc_border = true,
+                },
+                views = {
+                    hover  = view_settings,
+                    popup  = view_settings,
+                    notify = view_settings,
+                }
+            }
+        end
+    },
 }
