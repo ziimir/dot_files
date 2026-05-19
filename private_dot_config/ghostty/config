@@ -1,0 +1,69 @@
+# ============================
+# Окно / минимальный UI
+# ============================
+
+maximize = true
+window-padding-x = 10
+window-padding-y = 10
+window-decoration = false
+window-show-tab-bar = never
+
+# Не восстанавливать прошлые окна/табы/сплиты при старте
+window-save-state = never
+
+quit-after-last-window-closed = true
+
+# На macOS Option как Alt в терминале
+macos-option-as-alt = true
+
+# Курсор по умолчанию
+cursor-style = block
+cursor-style-blink = false
+
+# Оставляем shell integration, но запрещаем ему трогать курсор
+shell-integration-features = no-cursor
+
+# Font
+font-family = "Hurmit Nerd Font Mono"
+font-family-bold = "Hurmit Nerd Font Mono"
+font-family-italic = "Hurmit Nerd Font Mono"
+font-size = 20
+
+# Colors (Seoul256)
+background = 3a3a3a
+foreground = d0d0d0
+
+cursor-color = ff00ff
+cursor-text  = ffffff
+
+# normal 0–7
+palette = 0=4e4e4e
+palette = 1=d68787
+palette = 2=5f865f
+palette = 3=d8af5f
+palette = 4=85add4
+palette = 5=d7afaf
+palette = 6=87afaf
+palette = 7=d0d0d0
+
+# bright 8–15
+palette = 8=626262
+palette = 9=d75f87
+palette = 10=87af87
+palette = 11=ffd787
+palette = 12=add4fb
+palette = 13=ffafaf
+palette = 14=87d7d7
+palette = 15=e4e4e4
+
+# Keybindings
+
+# Стереть ВСЕ дефолтные шорткаты
+keybind = clear
+
+keybind = cmd+r=reload_config
+keybind = cmd+q=close_window
+keybind = cmd+n=new_window
+keybind = cmd+c=copy_to_clipboard
+keybind = cmd+v=paste_from_clipboard
+keybind = cmd+shift+f=toggle_maximize
