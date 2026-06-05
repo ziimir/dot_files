@@ -1,0 +1,232 @@
+{
+  "$schema": "https://opencode.ai/theme.json",
+  "defs": {
+    "bg": "#F0EDEC",
+    "panel": "#E7E2DF",
+    "element": "#DDD6D2",
+    "border": "#C7BFBA",
+    "border_active": "#6F6763",
+
+    "fg": "#2C363C",
+    "muted": "#7A7470",
+
+    "rose": "#DE6E7C",
+    "leaf": "#819B69",
+    "wood": "#B77E64",
+    "water": "#6099C0",
+    "blossom": "#B279A7",
+    "sky": "#66A5AD",
+
+    "diff_added_bg": "#E5EBDD",
+    "diff_removed_bg": "#F0DDDF"
+  },
+  "theme": {
+    "primary": {
+      "dark": "water",
+      "light": "water"
+    },
+    "secondary": {
+      "dark": "sky",
+      "light": "sky"
+    },
+    "accent": {
+      "dark": "blossom",
+      "light": "blossom"
+    },
+
+    "error": {
+      "dark": "rose",
+      "light": "rose"
+    },
+    "warning": {
+      "dark": "wood",
+      "light": "wood"
+    },
+    "success": {
+      "dark": "leaf",
+      "light": "leaf"
+    },
+    "info": {
+      "dark": "water",
+      "light": "water"
+    },
+
+    "text": {
+      "dark": "fg",
+      "light": "fg"
+    },
+    "textMuted": {
+      "dark": "muted",
+      "light": "muted"
+    },
+
+    "background": {
+      "dark": "bg",
+      "light": "bg"
+    },
+    "backgroundPanel": {
+      "dark": "panel",
+      "light": "panel"
+    },
+    "backgroundElement": {
+      "dark": "element",
+      "light": "element"
+    },
+
+    "border": {
+      "dark": "border",
+      "light": "border"
+    },
+    "borderActive": {
+      "dark": "border_active",
+      "light": "border_active"
+    },
+    "borderSubtle": {
+      "dark": "border",
+      "light": "border"
+    },
+
+    "diffAdded": {
+      "dark": "leaf",
+      "light": "leaf"
+    },
+    "diffRemoved": {
+      "dark": "rose",
+      "light": "rose"
+    },
+    "diffContext": {
+      "dark": "muted",
+      "light": "muted"
+    },
+    "diffHunkHeader": {
+      "dark": "water",
+      "light": "water"
+    },
+    "diffHighlightAdded": {
+      "dark": "leaf",
+      "light": "leaf"
+    },
+    "diffHighlightRemoved": {
+      "dark": "rose",
+      "light": "rose"
+    },
+    "diffAddedBg": {
+      "dark": "diff_added_bg",
+      "light": "diff_added_bg"
+    },
+    "diffRemovedBg": {
+      "dark": "diff_removed_bg",
+      "light": "diff_removed_bg"
+    },
+    "diffContextBg": {
+      "dark": "panel",
+      "light": "panel"
+    },
+    "diffLineNumber": {
+      "dark": "muted",
+      "light": "muted"
+    },
+    "diffAddedLineNumberBg": {
+      "dark": "diff_added_bg",
+      "light": "diff_added_bg"
+    },
+    "diffRemovedLineNumberBg": {
+      "dark": "diff_removed_bg",
+      "light": "diff_removed_bg"
+    },
+
+    "markdownText": {
+      "dark": "fg",
+      "light": "fg"
+    },
+    "markdownHeading": {
+      "dark": "fg",
+      "light": "fg"
+    },
+    "markdownLink": {
+      "dark": "water",
+      "light": "water"
+    },
+    "markdownLinkText": {
+      "dark": "sky",
+      "light": "sky"
+    },
+    "markdownCode": {
+      "dark": "leaf",
+      "light": "leaf"
+    },
+    "markdownBlockQuote": {
+      "dark": "muted",
+      "light": "muted"
+    },
+    "markdownEmph": {
+      "dark": "wood",
+      "light": "wood"
+    },
+    "markdownStrong": {
+      "dark": "fg",
+      "light": "fg"
+    },
+    "markdownHorizontalRule": {
+      "dark": "border",
+      "light": "border"
+    },
+    "markdownListItem": {
+      "dark": "water",
+      "light": "water"
+    },
+    "markdownListEnumeration": {
+      "dark": "sky",
+      "light": "sky"
+    },
+    "markdownImage": {
+      "dark": "blossom",
+      "light": "blossom"
+    },
+    "markdownImageText": {
+      "dark": "sky",
+      "light": "sky"
+    },
+    "markdownCodeBlock": {
+      "dark": "fg",
+      "light": "fg"
+    },
+
+    "syntaxComment": {
+      "dark": "muted",
+      "light": "muted"
+    },
+    "syntaxKeyword": {
+      "dark": "fg",
+      "light": "fg"
+    },
+    "syntaxFunction": {
+      "dark": "fg",
+      "light": "fg"
+    },
+    "syntaxVariable": {
+      "dark": "fg",
+      "light": "fg"
+    },
+    "syntaxString": {
+      "dark": "leaf",
+      "light": "leaf"
+    },
+    "syntaxNumber": {
+      "dark": "wood",
+      "light": "wood"
+    },
+    "syntaxType": {
+      "dark": "sky",
+      "light": "sky"
+    },
+    "syntaxOperator": {
+      "dark": "fg",
+      "light": "fg"
+    },
+    "syntaxPunctuation": {
+      "dark": "fg",
+      "light": "fg"
+    }
+  }
+}

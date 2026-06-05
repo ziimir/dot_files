@@ -35,19 +35,19 @@ return {
         -- Recommended/example keymaps
         vim.keymap.set(
             { "n", "x" },
-            "<M-a>",
+            "<Leader>aa",
             function() require("opencode").ask("@this: ", { submit = true }) end,
             { desc = "Ask opencode…" }
         )
         vim.keymap.set(
             { "n", "x" },
-            "<M-x>",
+            "<Leader>ax",
             function() require("opencode").select() end,
             { desc = "Select opencode…" }
         )
         vim.keymap.set(
             { "n", "t" },
-            "<M-t>",
+            "<Leader>at",
             function() require("opencode").toggle() end,
             { desc = "Toggle opencode" }
         )

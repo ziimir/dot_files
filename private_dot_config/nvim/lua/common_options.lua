@@ -56,6 +56,19 @@ vim.api.nvim_create_user_command(
     { nargs = 0 }
 )
 
+vim.api.nvim_create_user_command(
+    "CopyPathLine",
+    function(opts)
+        local path = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":.")
+        local line1 = opts.range > 0 and opts.line1 or vim.api.nvim_win_get_cursor(0)[1]
+        local line2 = opts.range > 0 and opts.line2 or line1
+        local range = line1 == line2 and ("L" .. line1) or ("L" .. line1 .. "-L" .. line2)
+
+        vim.fn.setreg("*", path .. ":" .. range)
+    end,
+    { nargs = 0, range = true }
+)
+
 -- gx - open path under cursor with external app
 vim.api.nvim_create_user_command(
     "OpenThis",

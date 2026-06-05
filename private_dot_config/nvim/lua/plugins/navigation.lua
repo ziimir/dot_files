@@ -86,7 +86,7 @@ return {
         opts = {
             keymaps = {
                 ["<C-h>"] = false,
-                ["<C-l>"] = false,
+                ["<C-l>"] = "actions.refresh",
                 ["<C-s>"] = false,
                 ["<C-t>"] = {
                     callback = function()
