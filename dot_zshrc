@@ -46,6 +46,7 @@ export NVM_DIR="$HOME/.nvm"
 
 # various setups
 for file in ~/.config/zsh/*; do
+  [[ "$(basename "$file")" == "prompt.zsh" ]] && continue
   source "$file"
 done
 
@@ -75,7 +76,7 @@ setopt PROMPT_SUBST
 # colors in prompt
 autoload -U colors && colors
 
-[ -f ~/.config/zsh/prompt/prompt.zsh ] && source ~/.config/zsh/prompt/prompt.zsh
+[ -f ~/.config/zsh/prompt.zsh ] && source ~/.config/zsh/prompt.zsh
 
 # terminal file manager
 lfcd() {
