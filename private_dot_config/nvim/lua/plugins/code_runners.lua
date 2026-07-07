@@ -1,32 +1,3 @@
--- HASKELL
--- execute
-vim.api.nvim_create_user_command(
-    "HaskellExe",
-    function()
-        vim.cmd [[:AsyncRun -mode=term -pos=floaterm ghc $(VIM_FILEPATH) && $(VIM_PATHNOEXT)]]
-    end,
-    { nargs = 0 }
-)
-
--- repl with loaded file
-vim.api.nvim_create_user_command(
-    "HaskellREPL",
-    function()
-        vim.cmd [[:AsyncRun -mode=term -pos=floaterm ghci $(VIM_FILEPATH)]]
-    end,
-    { nargs = 0 }
-)
-
-local haskellCodeHelpersGroup = vim.api.nvim_create_augroup("HaskellCodeHelpersGroup", { clear = true })
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = { "haskell" },
-    callback = function()
-        vim.keymap.set("n", "<F5>", ":HaskellExe<CR>", { silent = true })
-        vim.keymap.set("n", "<F9>", ":HaskellREPL<CR>", { silent = true })
-    end,
-    group = haskellCodeHelpersGroup
-})
-
 -- NODE
 -- execute
 vim.api.nvim_create_user_command(
@@ -45,16 +16,6 @@ vim.api.nvim_create_user_command(
     end,
     { nargs = 0 }
 )
-
-local nodeCodeHelpersGroup = vim.api.nvim_create_augroup("NodeCodeHelpersGroup", { clear = true })
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = { "javascript" },
-    callback = function()
-        vim.keymap.set("n", "<F5>", ":NodeExe<CR>", { silent = true })
-        vim.keymap.set("n", "<F9>", ":NodeREPL<CR>", { silent = true })
-    end,
-    group = nodeCodeHelpersGroup
-})
 
 -- C
 -- compile
@@ -75,33 +36,66 @@ vim.api.nvim_create_user_command(
     { nargs = 0 }
 )
 
-local clangCodeHelpersGroup = vim.api.nvim_create_augroup("ClangCodeHelpersGroup", { clear = true })
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = { "c" },
-    callback = function()
-        vim.keymap.set("n", "<F7>", ":ClangCmp<CR>", { silent = true })
-        vim.keymap.set("n", "<F5>", ":ClangExe<CR>", { silent = true })
-    end,
-    group = clangCodeHelpersGroup
-})
+local runners_by_filetype = {
+    javascript = {
+        { label = "Node: execute file",        command = "NodeExe",  order = 9 },
+        { label = "Node: open REPL with file", command = "NodeREPL", order = 1 },
+    },
+    c = {
+        { label = "C: compile",             command = "ClangCmp", order = 1 },
+        { label = "C: compile and execute", command = "ClangExe", order = 9 },
+    },
+}
 
--- RUST
--- compile + execute
-vim.api.nvim_create_user_command(
-    "CargoRun",
-    function()
-        vim.cmd [[:AsyncRun -mode=term -pos=floaterm -cwd=$(VIM_CWD) cargo run]]
-    end,
-    { nargs = 0 }
-)
+local function open_code_runner_picker()
+    local filetype = vim.bo.filetype
+    local runners = runners_by_filetype[filetype]
 
-local rustCodeHelpersGroup = vim.api.nvim_create_augroup("RustCodeHelpersGroup", { clear = true })
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = { "rust" },
-    callback = function()
-        vim.keymap.set("n", "<F5>", ":CargoRun<CR>", { silent = true })
-    end,
-    group = rustCodeHelpersGroup
-})
+    if not runners then
+        vim.notify("No code runners for filetype: " .. filetype, vim.log.levels.WARN)
+        return
+    end
+
+    local sorted_runners = {}
+
+    for index, runner in ipairs(runners) do
+        table.insert(sorted_runners, vim.tbl_extend("force", runner, { index = index }))
+    end
+
+    table.sort(sorted_runners, function(left, right)
+        local left_order = left.order or 100
+        local right_order = right.order or 100
+
+        if left_order == right_order then
+            return left.index < right.index
+        end
+
+        return left_order < right_order
+    end)
+
+    local labels = {}
+    local commands_by_label = {}
+
+    for _, runner in ipairs(sorted_runners) do
+        table.insert(labels, runner.label)
+        commands_by_label[runner.label] = runner.command
+    end
+
+    return vim.fn['fzf#run'](
+        vim.fn['fzf#wrap']({
+            source = labels,
+            sink = function(label)
+                local command = commands_by_label[label]
+
+                if command then
+                    vim.cmd(command)
+                end
+            end,
+        })
+    )
+end
+
+vim.api.nvim_create_user_command("CodeRunner", open_code_runner_picker, { nargs = 0 })
+vim.keymap.set("n", "<F5>", open_code_runner_picker, { silent = true, desc = "Code runner" })
 
 return {}

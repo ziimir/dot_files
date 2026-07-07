@@ -25,10 +25,26 @@ return {
         },
     },
     config = function()
-        ---@type opencode.Opts
-        vim.g.opencode_opts = {
-            -- Your configuration, if any; goto definition on the type or field for details
-        }
+        --local opencode_cmd = "opencode --port"
+        --local floaterm_name = "opencode"
+        --vim.g.opencode_opts = {
+        --server = {
+        --start = function()
+        --vim.notify("opencode.nvim server.start via floaterm")
+        --vim.cmd(
+        --"FloatermNew "
+        --.. "--name=" .. floaterm_name .. " "
+        --.. opencode_cmd
+        --)
+        --end,
+        --toggle = function()
+        --vim.cmd("FloatermToggle " .. floaterm_name)
+        --end,
+        --stop = function()
+        --vim.cmd("FloatermKill " .. floaterm_name)
+        --end,
+        --},
+        --}
 
         vim.o.autoread = true -- Required for `opts.events.reload`
 
@@ -49,6 +65,18 @@ return {
             { "n", "t" },
             "<Leader>at",
             function() require("opencode").toggle() end,
+            --function()
+            --for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+            --if vim.api.nvim_buf_is_valid(buf) and vim.b[buf].floaterm_name == floaterm_name then
+            --vim.cmd("FloatermToggle " .. floaterm_name)
+            --return
+            --end
+            --end
+
+            --vim.cmd(
+            --"FloatermNew " .. "--name=" .. floaterm_name .. " " .. opencode_cmd
+            --)
+            --end,
             { desc = "Toggle opencode" }
         )
 

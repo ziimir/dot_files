@@ -86,8 +86,9 @@ return {
         opts = {
             keymaps = {
                 ["<C-h>"] = false,
-                ["<C-l>"] = "actions.refresh",
+                ["<C-l>"] = false,
                 ["<C-s>"] = false,
+                ["<C-r>"] = "actions.refresh",
                 ["<C-t>"] = {
                     callback = function()
                         local oil = require('oil')

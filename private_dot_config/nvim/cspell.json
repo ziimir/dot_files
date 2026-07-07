@@ -11,6 +11,8 @@
   "userWords": [
     "Scriptor",
     "rspack",
-    "autorun"
+    "autorun",
+    "nvim",
+    "keymap"
   ]
 }
