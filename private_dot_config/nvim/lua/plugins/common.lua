@@ -6,7 +6,20 @@ return {
     "machakann/vim-sandwich",
     "svermeulen/vim-easyclip",
     "j-hui/fidget.nvim",
-    "preservim/vimux",
+    {
+        "preservim/vimux",
+        init = function()
+            vim.g.VimuxHeight = "40%"
+        end
+    },
+    {
+        "ziimir/tmux-command-runner",
+        dev = true,
+        dependencies = "preservim/vimux",
+        opts = {
+            idle_commands = { "zsh", "bash", "sh" },
+        },
+    },
     {
         "LunarVim/bigfile.nvim",
         opts = {
