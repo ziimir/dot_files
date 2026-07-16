@@ -7,6 +7,10 @@ set hidden true
 set preview true
 set previewer ~/.config/lf/scripts/previewer.sh
 
+cmd on-select &{{
+  lf -remote "send $id redraw"
+}}
+
 map . set hidden!
 
 # quit without changing directories when using lfcd

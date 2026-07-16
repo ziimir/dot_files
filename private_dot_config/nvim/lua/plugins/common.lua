@@ -6,6 +6,7 @@ return {
     "machakann/vim-sandwich",
     "svermeulen/vim-easyclip",
     "j-hui/fidget.nvim",
+    "preservim/vimux",
     {
         "LunarVim/bigfile.nvim",
         opts = {

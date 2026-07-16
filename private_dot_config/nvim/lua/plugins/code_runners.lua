@@ -22,7 +22,7 @@ vim.api.nvim_create_user_command(
 vim.api.nvim_create_user_command(
     "ClangCmp",
     function()
-        vim.cmd [[:AsyncRun -cwd=$(VIM_FILEDIR) gcc $(VIM_FILEPATH) -o $(VIM_FILEDIR)/$(VIM_FILENOEXT)]]
+        vim.cmd [[:AsyncRun -mode=term -pos=floaterm -cwd=$(VIM_FILEDIR) gcc $(VIM_FILEPATH) -o $(VIM_FILEDIR)/$(VIM_FILENOEXT)]]
     end,
     { nargs = 0 }
 )
@@ -38,12 +38,12 @@ vim.api.nvim_create_user_command(
 
 local runners_by_filetype = {
     javascript = {
-        { label = "Node: execute file",        command = "NodeExe",  order = 9 },
-        { label = "Node: open REPL with file", command = "NodeREPL", order = 1 },
+        { label = "Node: execute file",        command = "NodeExe",  order = 1 },
+        { label = "Node: open REPL with file", command = "NodeREPL", order = 9 },
     },
     c = {
-        { label = "C: compile",             command = "ClangCmp", order = 1 },
-        { label = "C: compile and execute", command = "ClangExe", order = 9 },
+        { label = "C: compile",             command = "ClangCmp", order = 9 },
+        { label = "C: compile and execute", command = "ClangExe", order = 1 },
     },
 }
 
