@@ -1,41 +1,151 @@
 #!/usr/bin/env bash
+set -e
 
-# имена и директории для сессий
-SESSION_HOME="home"
-DIR_HOME="$HOME"
+# Настройки.
+DEFAULT_SESSION="home"
+PROJECTS_DIR="$HOME/Projects"
 
-SESSION_DOWNLOADS="downloads"
-DIR_DOWNLOADS="$HOME/Downloads"
+SESSIONS=(
+  "home|$HOME"
+  "downloads|$HOME/Downloads"
+)
 
-# если сессии ещё нет — создаём, сразу с нужным pwd
-if ! tmux has-session -t "$SESSION_HOME" 2>/dev/null; then
-  TMUX='' tmux new-session -d -s "$SESSION_HOME" -c "$DIR_HOME"
-fi
+fail() {
+  printf '%s\n' "$*" >&2
+  exit 1
+}
 
-if ! tmux has-session -t "$SESSION_DOWNLOADS" 2>/dev/null; then
-  tmux new-session -d -s "$SESSION_DOWNLOADS" -c "$DIR_DOWNLOADS"
-fi
+usage() {
+  printf 'Usage: %s [--project|-p]\n' "${0##*/}"
+  printf '  No arguments: create SESSIONS and open DEFAULT_SESSION.\n'
+  printf '  --project: select a project with fzf.\n'
+}
 
-default_session_param="${1:-h}"
+ensure_session() {
+  local name="$1" dir="$2"
 
-case "$default_session_param" in
-  h)
-    session="$SESSION_HOME"
-    ;;
-  d)
-    session="$SESSION_DOWNLOADS"
-    ;;
-  *)
-    echo "unknown mode: $default_session_param" >&2
-    echo "allowed: h, d" >&2
-    exit 2
-    ;;
+  if ! tmux has-session -t "=$name" 2>/dev/null; then
+    [[ -d "$dir" ]] || fail "Directory does not exist: $dir"
+    # ## обозначает буквальный # в форматах tmux; /. защищает конечный ;.
+    tmux new-session -d -s "$name" -c "${dir//#/##}/."
+  fi
+}
+
+connect_session() {
+  if [[ -n "${TMUX:-}" ]]; then
+    exec tmux switch-client -t "=$1"
+  else
+    exec tmux attach-session -t "=$1"
+  fi
+}
+
+[[ $# -le 1 ]] || { usage >&2; exit 2; }
+
+case "${1:-}" in
+  -h|--help) usage; exit 0 ;;
+  ""|-p|--project) ;;
+  *) usage >&2; exit 2 ;;
 esac
 
-# если мы уже внутри tmux — просто переключаемся на первую
-if [ -n "$TMUX" ]; then
-  tmux switch-client -t "$session"
-else
-  # если вне tmux — прикрепляемся к первой
-  tmux attach-session -t "$session"
+command -v tmux >/dev/null || fail "tmux is not installed"
+
+# Режим дефолтных сессий.
+if [[ -z "${1:-}" ]]; then
+  default_found=false
+
+  for entry in "${SESSIONS[@]}"; do
+    IFS='|' read -r name dir <<< "$entry"
+
+    if [[ ! "$name" =~ ^[a-zA-Z0-9_-]+$ ||
+          "$dir" != /* || "$entry" == *'|'*'|'* ]]; then
+      fail "Invalid entry (expected session|/absolute/path): $entry"
+    fi
+
+    if [[ "$name" == "$DEFAULT_SESSION" ]]; then
+      default_found=true
+    fi
+  done
+
+  [[ "$default_found" == true ]] ||
+    fail "Default session is not in SESSIONS: $DEFAULT_SESSION"
+
+  for entry in "${SESSIONS[@]}"; do
+    IFS='|' read -r name dir <<< "$entry"
+    ensure_session "$name" "$dir"
+  done
+
+  connect_session "$DEFAULT_SESSION"
 fi
+
+# Режим выбора проекта: только непосредственные нескрытые подпапки.
+command -v fzf >/dev/null || fail "fzf is not installed"
+[[ -d "$PROJECTS_DIR" ]] || fail "Directory does not exist: $PROJECTS_DIR"
+
+shopt -s nullglob
+directories=("$PROJECTS_DIR"/*/)
+[[ ${#directories[@]} -gt 0 ]] || fail "No project directories in: $PROJECTS_DIR"
+
+choices=()
+for dir in "${directories[@]}"; do
+  dir="${dir%/}"
+  choices+=("${dir##*/}/")
+done
+
+# Завершающий / сохраняет даже перевод строки в конце имени каталога.
+if selected=$(
+  printf '%s\0' "${choices[@]}" |
+    fzf --read0 --no-print0 --no-print-query --no-multi --no-expect \
+        --prompt='Project > '
+); then
+  [[ -n "$selected" ]] || exit 0
+else
+  fzf_status=$?
+  case "$fzf_status" in
+    1|130) exit 0 ;;  # Нет выбора, Esc или Ctrl+C.
+    *) exit "$fzf_status" ;;
+  esac
+fi
+
+choice_found=false
+for choice in "${choices[@]}"; do
+  if [[ "$choice" == "$selected" ]]; then
+    choice_found=true
+    break
+  fi
+done
+[[ "$choice_found" == true ]] || fail "fzf returned an unexpected selection"
+
+working_dir="${selected%/}"
+project_dir="$PROJECTS_DIR/$working_dir"
+session_base="${working_dir//[![:alnum:]_-]/_}"
+session="$session_base"
+suffix=2
+
+# Не занимаем имя другой директории или дефолтной сессии.
+while :; do
+  reserved=false
+  for entry in "${SESSIONS[@]}"; do
+    IFS='|' read -r name dir <<< "$entry"
+    if [[ "$name" == "$session" && ! "$dir" -ef "$project_dir" ]]; then
+      reserved=true
+      break
+    fi
+  done
+
+  if [[ "$reserved" == false ]]; then
+    if ! tmux has-session -t "=$session" 2>/dev/null; then
+      break
+    fi
+
+    existing_dir=$(tmux display-message -p -t "=$session" '#{session_path}')
+    if [[ "$existing_dir" -ef "$project_dir" ]]; then
+      break
+    fi
+  fi
+
+  session="$session_base-$suffix"
+  suffix=$((suffix + 1))
+done
+
+ensure_session "$session" "$project_dir"
+connect_session "$session"
